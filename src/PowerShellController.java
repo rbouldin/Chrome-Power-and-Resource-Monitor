@@ -1,15 +1,8 @@
 /** 
  *  PowerShellController.java
  *
- *  VERSION: 2021.03.16
+ *  VERSION: 2021.03.17
  *  AUTHORS: Rae Bouldin
- *
- *  DESCRIPTION:
- *    ...
- *    ...
- *    ...
- * 
- *  (Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech)
  */
 package src;
 
@@ -24,6 +17,9 @@ import java.util.List;
 
 public class PowerShellController {
 
+    /**
+     *  Execute the PowerShell script located at the specified scriptPath.
+     */
     public static void runPowerShellScript(String scriptPath) throws IOException {
 
         //String command = "powershell.exe  your command";
