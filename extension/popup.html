@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <style>
-      button {
-        height: 40px;
-        width: 80px;
-        outline: none;
-      }
-      body {
-        height: 250px;
-        width: 350px;
-      }
-    </style>
-    <script src="popup.js"></script>
-  </head>
-  <body>
-    <button id="start_monitor">start monitor</button>
-    <button id="stop_monitor">stop monitor</button>
-  </body>
+
+<head>
+  <link rel="stylesheet" href="popup.css">
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script src="popup.js"></script>
+</head>
+
+<body>
+  <header>
+    <div class="header">
+      <h2 id="tab_counter">Number of tabs opened:</h2>
+    </div>
+  </header>
+
+  <main>
+    <div id="details">
+      <h4 class="detail_info" id="curr_power">Current power usage: 0W</h4>
+      <h4 class="detail_info" id="total_power">Total power usage: 0Wh</h4>
+      <div id="power_chart"></div>
+    </div>
+    <div id="button_layer">
+      <button id="start_monitor">start monitor</button>
+    </div>
+  </main>
+  
+</body>
+
 </html>

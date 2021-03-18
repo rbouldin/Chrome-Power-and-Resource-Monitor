@@ -1,0 +1,59 @@
+body {
+    height: 280px;
+    width: 450px;
+    z-index:0;
+    font-family: Verdana, sans-serif;
+}
+
+main {
+    position:relative;
+    margin: 10px 8px 8px 8px;
+    padding: 0px;
+    height: 250px;
+    width: 100%;
+}
+
+#details {
+    position:absolute;
+    margin: 0px;
+    padding: 10px 15px 15px 15px;
+    color: white;
+    background-color: #3a4a53; 
+    filter: blur(3px);
+    z-index:10;
+}
+
+#button_layer {
+    position:absolute;
+    z-index:20;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.header {
+    margin: 8px 8px 2px 8px;
+    margin-bottom: 0px;
+}
+
+h2 {
+    margin-bottom : 0px
+}
+
+.detail_info {
+    margin: 4px 4px 4px 4px;
+}
+
+#power_chart {
+    margin: 15px 4px 4px 4px;
+}
+
+#start_monitor {
+    height: 40px;
+    width: 80px;
+    outline: none;
+    justify-content: center;
+    align-items: center;
+}
+
