@@ -1,5 +1,5 @@
 body {
-    height: 280px;
+    height: 320px;
     width: 450px;
     z-index:0;
     font-family: Verdana, sans-serif;
@@ -55,5 +55,9 @@ h2 {
     outline: none;
     justify-content: center;
     align-items: center;
+}
+
+#monitor_timer{
+    color: white;
 }
 
