@@ -1,0 +1,40 @@
+red hat 8
+
+install mysql database
+===========================================
+1. install mysql:
+$ sudo yum -y install @mysql
+
+2. start mysql:
+$ sudo systemctl start mysqld
+$ sudo systemctl enable --now mysqld
+$ sudo systemctl status mysqld
+
+3. log into mysql to setup the password:
+$ sudo mysql
+> ALTER USER 'root'@'localhost' IDENTIFIED BY 'chrome_sqlpass'; # you can set the password to whatever you like
+> exit
+
+4. now you can log into the mysql and create table:
+$ mysql -uroot -pchrome_sqlpass
+
+
+set up a web server that can recive post/get (Django based on python)
+==========================================
+1. install python
+$ sudo yum install python3
+2. install Django
+$ sudo pip3 install Django
+
+3. install git and clone the project
+$ sudo yum install git
+$ git clone https://github.com/rbouldin/Chrome-Power-and-Resource-Monitor.git
+$ cd Chrome-Power-and-Resource-Monitor/server/chromeMonitor
+
+4. install pymysql
+$ sudo pip3 install pymysql
+$ python3 manage.py makemigrations chromeMonitor
+$ python3 manage.py migrate TestModel
+
+5. run server with (you may need to change the settings.py to add allowed host)
+$ python3 manage.py runserver 0.0.0.0:8000
