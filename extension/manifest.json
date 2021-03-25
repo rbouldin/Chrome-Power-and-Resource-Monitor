@@ -4,7 +4,8 @@
     "description": "Power Monitor extension",
     "manifest_version": 2,
     "permissions": [
-        "storage"
+        "storage",
+        "nativeMessaging"
     ],
     "background": {
         "scripts": ["background.js"]

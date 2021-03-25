@@ -34,7 +34,7 @@ $ cd Chrome-Power-and-Resource-Monitor/server/chromeMonitor
 4. install pymysql
 $ sudo pip3 install pymysql
 $ python3 manage.py makemigrations chromeMonitor
-$ python3 manage.py migrate TestModel
+$ python3 manage.py migrate chromeMonitor
 
 5. run server with (you may need to change the settings.py to add allowed host)
 $ python3 manage.py runserver 0.0.0.0:8000
