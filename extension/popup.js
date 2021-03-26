@@ -26,6 +26,12 @@ var timer = function () {
     document.getElementById("monitor_timer").innerText = formatTime(timeElapsed);
 }
 
+
+//native message
+var native_connection = function () {
+    port = chrome.runtime.connectNative("com.chrome.monitor");
+}
+
 //content
 function processData(csv) {
     var allTextLines = csv.split(/\r\n|\n/);
@@ -147,6 +153,7 @@ chrome.runtime.onMessage.addListener(
 click_events = function () {
     document.getElementById("start_monitor").addEventListener("click", function () {
         if (monitorStarted == false) {
+            native_connection();
             monitorStartTime = new Date();
             timeUpdate = setInterval(timer, 1000);
             document.getElementById("start_monitor").innerText = "stop monitor";
