@@ -21,3 +21,8 @@ README.md
 *.exe
 *.o
 *.so
+
+# java project file
+.classpath
+.project
+src/Main.java
