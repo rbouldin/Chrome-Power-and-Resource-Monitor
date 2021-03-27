@@ -28,8 +28,18 @@ var timer = function () {
 
 
 //native message
+var message = function(msg) {
+    document.getElementById("cpu_info").innerText = "CPU usage: " + msg.cpuTotal + "%";
+}
+
+var disconnect = function() {
+    console.warn("Disconnected");
+}
+
 var native_connection = function () {
     port = chrome.runtime.connectNative("com.chrome.monitor");
+    port.onMessage.addListener(message);
+    port.onDisconnect.addListener(disconnect);
 }
 
 //content

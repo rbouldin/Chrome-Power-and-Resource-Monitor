@@ -1,7 +1,7 @@
 {
     "name" : "com.chrome.monitor",
     "description" : "Power Monitor extension",
-    "path" : "native.py",
+    "path" : "javawrapper.bat",
     "type" : "stdio",
     "allowed_origins": [
         "chrome-extension://dilgmcnjlgcgkodiifoomnjccgjhdedc/"

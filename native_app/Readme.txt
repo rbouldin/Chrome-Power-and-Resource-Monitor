@@ -1,0 +1,3 @@
+1. I added gson to the java project in order to parse json in java, you may need to configure the build path to include the gson-2.6.2.jar
+2. the way it native message works is the json file calls the wrapper.bat, in which it calls the runable jar file. You need to export your java project to a runable jar file to replace this runable jar file to test your code
+3. The thing I have not add is the exit function, so once the jar file is started by the chrome, it never stops, you need to manully terminate it in the task manager (called java tm ...)
