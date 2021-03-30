@@ -5,4 +5,4 @@ Get-Wmiobject Sensor -namespace root\OpenHardwareMonitor |
     @{Name="SensorType";Expression={[String]$_.SensorType}},
     @{Name="Value (W)";Expression={[String]$_.Value}},
     @{Name="ProcessID";Expression={[String]$_.ProcessId}} |
-Export-CSV -Path output_POW.csv
+Export-CSV -Path monitor_POW_output.csv

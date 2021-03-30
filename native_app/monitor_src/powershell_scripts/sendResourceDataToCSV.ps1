@@ -25,7 +25,7 @@ function getCPU {
     # $date + ' > CPU: ' + $cpuTime.ToString("#,0.000") + '%, Avail. Mem.: ' + $availMem.ToString("N0") + 'MB (' + (104857600 * $availMem / $totalRam).ToString("#,0.0") + '%)'
 	$cpuTime.ToString("#,0.000")
 	# This can be changed to set how fast/slow this method returns
-	Start-Sleep -s 2
+	#Start-Sleep -s 2
 }
 
 # controller param = 3
@@ -43,7 +43,7 @@ function getCPULoop {
      	# $date + ' > CPU: ' + $cpuTime.ToString("#,0.000") + '%, Avail. Mem.: ' + $availMem.ToString("N0") + 'MB (' + (104857600 * $availMem / $totalRam).ToString("#,0.0") + '%)'
      	# This can be changed to set how fast/slow this method returns
 		$cpuTime.ToString("#,0.000")
-		Start-Sleep -s 2
+		#Start-Sleep -s 2
 		#curr++
  	}	
 }
@@ -116,4 +116,4 @@ $csvOutput = @(
 		Value = $gpuMem.Value
 	}
 )
-$csvOutput | Export-CSV -Path output_RES.csv
+$csvOutput | Export-CSV -Path monitor_RES_output.csv
