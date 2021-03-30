@@ -12,8 +12,5 @@ There will be a couple-second-delay when you launch the Native App, due to initi
 7. Check that "monitor.jar" runs as expected using "java -jar monitor.jar" from the directory it is in.
 
 ### Native Messaging Setup
-1. Update native.json so that "chrome-extension://paste_your_extension_ID_here/" contains your extension ID (e.g. "chrome-extension://lconabdfkpmfliemkbbjccjkojgcoapm/").
-2. update the registry key com.chrome.monitor to point to the native.json file
-.
-.
-.
+1. Edit native.json so that "chrome-extension://paste_your_extension_ID_here/" contains your extension ID (e.g. "chrome-extension://lconabdfkpmfliemkbbjccjkojgcoapm/").
+2. Run add_com_chrome_monitor.bat to add the com.chrome.monitor registry key with the the full path to your native.json file; or update the registry manually using Registry Editor. This will allow the Chrome extension pass messages back and forth with the Native Application.
