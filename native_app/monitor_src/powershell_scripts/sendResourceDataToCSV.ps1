@@ -116,4 +116,4 @@ $csvOutput = @(
 		Value = $gpuMem.Value
 	}
 )
-$csvOutput | Export-CSV -Path output_RES.csv
+$csvOutput | Export-CSV -Path monitor_RES_output.csv
