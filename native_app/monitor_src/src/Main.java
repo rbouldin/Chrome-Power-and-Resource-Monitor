@@ -20,11 +20,25 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 
-		while (true) {
+		// The initial updateData() will create the CSV output files and 
+		// sleeping for 4 seconds will ensure the files have enough time to 
+		// generate. Not sleeping for long enough may create FileNotFound 
+		// Exceptions.
+		Monitor.updateData();
+		TimeUnit.SECONDS.sleep(4);
+		
+		int i = 60;
+		while (i > 0) {
 			Monitor.updateData();
-			sendMonitorRecord();
 			TimeUnit.SECONDS.sleep(1);
+			sendMonitorRecord();
+			i--;
 		}
+		
+		// Sleep before attempting to delete the files, to give the last run of
+		// updateData() enough time to finish executing.
+		TimeUnit.SECONDS.sleep(4);
+		Monitor.deleteOutputFiles();
 
 	}
 	

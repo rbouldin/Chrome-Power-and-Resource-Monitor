@@ -28,7 +28,7 @@ public class PowerShellController {
 		// Getting the results
 		powerShellProcess.getOutputStream().close();
 
-//		String line;
+		String line;
 //		System.out.println("Standard Output:");
 //		BufferedReader stdout = new BufferedReader(new InputStreamReader(powerShellProcess.getInputStream()));
 
@@ -39,7 +39,7 @@ public class PowerShellController {
 
 //		System.out.println("Standard Error:");
 //		BufferedReader stderr = new BufferedReader(new InputStreamReader(powerShellProcess.getErrorStream()));
-//
+////
 //		while ((line = stderr.readLine()) != null) {
 //			System.out.println(line);
 //		}

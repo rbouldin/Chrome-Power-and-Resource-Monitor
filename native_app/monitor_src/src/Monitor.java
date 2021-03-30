@@ -19,7 +19,7 @@ import java.io.IOException;
 public class Monitor {
 
     private final static String POWER_POWERSHELL_SCRIPT = "./powershell_scripts/sendPowerDataToCSV.ps1";
-    private final static String POWER_DATA_FILEPATH = "./output_POW.csv";
+    private final static String POWER_DATA_FILEPATH = "./monitor_POW_output.csv";
 
     private final static int PINDEX_NAME = 0;
     private final static int PINDEX_SENSORTYPE = 1;
@@ -27,7 +27,7 @@ public class Monitor {
     private final static int PINDEX_PROCESSID = 3;
     
     private final static String RESOURCE_POWERSHELL_SCRIPT = "./powershell_scripts/sendResourceDataToCSV.ps1";
-    private final static String RESOURCE_DATA_FILEPATH = "./output_RES.csv";
+    private final static String RESOURCE_DATA_FILEPATH = "./monitor_RES_output.csv";
     
     private final static int RINDEX_VALUE = 1;
 
@@ -43,9 +43,9 @@ public class Monitor {
     public static boolean deleteOutputFiles() {
     	
     	File powerDataFile = new File(POWER_DATA_FILEPATH);
-    	boolean powerFileDeleted = powerDataFile.delete();
-    	
     	File resourceDataFile = new File(RESOURCE_DATA_FILEPATH);
+    	
+    	boolean powerFileDeleted = powerDataFile.delete();
     	boolean resourceFileDeleted = resourceDataFile.delete();
     	
     	return powerFileDeleted && resourceFileDeleted;
