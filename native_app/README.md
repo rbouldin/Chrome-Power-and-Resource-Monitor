@@ -5,7 +5,7 @@ The Native App currently runs for 60 loops and then stops. Open Hardware Monitor
 ## Setting up the Native App and Native Messaging
 ### Native App Setup
 1. If you haven't already, download Open Hardware Monitor from https://openhardwaremonitor.org/.
-3. Create a Java project using the files in monitor_src. Configure the project build path to include the gson-2.6.2.jar file (download from https://search.maven.org/artifact/com.google.code.gson/gson/2.6.2/jar).
+3. Create a Java project using the files in monitor_src. Configure the project build path to include [gson-2.6.2.jar](https://search.maven.org/artifact/com.google.code.gson/gson/2.6.2/jar).
 5. Check that the Java project runs as expected.
 6. Export the Java project to a runnable jar file named "monitor.jar" inside the "native_app" folder on your machine.
 7. Check that "monitor.jar" runs as expected using "java -jar monitor.jar" from the directory it is in.
