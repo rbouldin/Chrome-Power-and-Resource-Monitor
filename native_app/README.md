@@ -12,7 +12,8 @@ There will be a couple-second-delay when you launch the Native App, due to initi
 7. Check that "monitor.jar" runs as expected using "java -jar monitor.jar" from the directory it is in.
 
 ### Native Messaging Setup
-The way it native message works is the json file calls the wrapper.bat, in which it calls the runable jar file. You need to export your java project to a runable jar file to replace this runable jar file to test your code.
+1. Update native.json so that "chrome-extension://paste_your_extension_ID_here/" contains your extension ID (e.g. "chrome-extension://lconabdfkpmfliemkbbjccjkojgcoapm/").
+2. update the registry key com.chrome.monitor to point to the native.json file
 .
 .
 .
