@@ -1,0 +1,9 @@
+{
+    "name" : "com.chrome.monitor",
+    "description" : "Power and Resource Monitor native host",
+    "path" : "run_native_app.bat",
+    "type" : "stdio",
+    "allowed_origins": [
+        "chrome-extension://paste_your_extension_ID_here/"
+    ]
+}
