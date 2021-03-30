@@ -16,18 +16,29 @@
 
   <main>
     <div id="details">
-      <h4 class="detail_info" id="curr_power">Current power usage: 0W</h4>
-      <h4 class="detail_info" id="total_power">Total power usage: 0Wh</h4>
+      <div class="row">
+        <div class="double-column">
+          <h4 class="detail_info" id="curr_power">Current power usage: 0W</h4>
+          <h4 class="detail_info" id="total_power">Total power usage: 0Wh</h4>
+        </div>
+        <div class="column">
+          <button id="stop_monitor">stop monitor</button>
+          <h4 id="monitor_timer"></h4>
+        </div>
+      </div>
+
       <div id="power_chart"></div>
-      <h4 class="detail_info" id="cpu_info">CPU usage:</h4>
-      <h4 class="detail_info" id="gpu_info">GPU usage:</h4>
+      <div class="row">
+        <h4 class="detail_info column" id="cpu_info">CPU:</h4>
+        <h4 class="detail_info column" id="gpu_info">GPU:</h4>
+        <h4 class="detail_info column" id="mem_info">MEM usage:</h4>
+      </div>
     </div>
     <div id="button_layer">
       <button id="start_monitor">start monitor</button>
-      <h4 id="monitor_timer"></h4>
     </div>
   </main>
-  
+
 </body>
 
 </html>

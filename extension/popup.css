@@ -41,12 +41,40 @@ h2 {
     margin-bottom : 0px
 }
 
+.row {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 1
+}
+
+.double-column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 2
+}
+
+
 .detail_info {
     margin: 4px 4px 4px 4px;
 }
 
 #power_chart {
     margin: 15px 4px 4px 4px;
+}
+
+#stop_monitor {
+    height: 40px;
+    width: 60px;
+    outline: none;
 }
 
 #start_monitor {
