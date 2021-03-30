@@ -1,6 +1,6 @@
 # Native App and Native Messaging README
 ## Current Functionality
-The Native App currently runs for 60 loops and then stops. Open Hardware Monitor needs to be running for the program to work properly, but the program will still run without errors if Open Hardware Monitor is not downloaded or running.
+There will be a couple-second-delay when you launch the Native App, due to initial setup within the app itself. The Native App currently runs for 60 loops and then stops. Open Hardware Monitor needs to be running for the program to work properly, but the program will still run without errors if Open Hardware Monitor is not downloaded or running.
 
 ## Setting up the Native App and Native Messaging
 ### Native App Setup
