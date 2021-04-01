@@ -28,34 +28,44 @@ var timer = function () {
 
 
 //native message
+var message = function (msg) {
+    document.getElementById("cpu_info").innerText = "CPU usage: " + msg.cpuTotal + "%";
+}
+
+var disconnect = function () {
+    console.warn("Disconnected");
+}
+
 var native_connection = function () {
     port = chrome.runtime.connectNative("com.chrome.monitor");
+    port.onMessage.addListener(message);
+    port.onDisconnect.addListener(disconnect);
 }
 
 //content
 function processData(csv) {
     var allTextLines = csv.split(/\r\n|\n/);
     var lines = [];
-    for (var i=0; i<allTextLines.length; i++) {
+    for (var i = 0; i < allTextLines.length; i++) {
         var data = allTextLines[i].split(',');
-            var tarr = [];
-            for (var j=0; j<data.length; j++) {
-                tarr.push(data[j].substring(1, data[j].length-1));
-            }
-            lines.push(tarr);
+        var tarr = [];
+        for (var j = 0; j < data.length; j++) {
+            tarr.push(data[j].substring(1, data[j].length - 1));
+        }
+        lines.push(tarr);
     }
-   return lines;
+    return lines;
 }
 
 //load data
 var power;
 var cpu;
 var gpu;
-var processPower = function(data){
+var processPower = function (data) {
     power = data[2][2];
     document.getElementById("curr_power").innerText = "Current power usage: " + power + "W";
 }
-var processRes = function(data){
+var processRes = function (data) {
     cpu = data[3][1];
     gpu = data[4][1]
     document.getElementById("cpu_info").innerText = "CPU usage: " + cpu + "%";
@@ -152,20 +162,13 @@ chrome.runtime.onMessage.addListener(
 
 click_events = function () {
     document.getElementById("start_monitor").addEventListener("click", function () {
-        if (monitorStarted == false) {
-            native_connection();
-            monitorStartTime = new Date();
-            timeUpdate = setInterval(timer, 1000);
-            document.getElementById("start_monitor").innerText = "stop monitor";
-            monitorStarted = true;
-        } else {
-            document.getElementById("start_monitor").innerText = "start monitor";
-            clearInterval(timeUpdate);
-            monitorStarted = false;
-            document.getElementById("button_layer").style.visibility = "hidden";
-            document.getElementById("details").style.cssText = "filter: blur(0px);";;
-            /* .style.filter = "filter: blur(10px);"; */
-        }
+        monitorStarted = true;
+        native_connection();
+        monitorStartTime = new Date();
+        timeUpdate = setInterval(timer, 1000);
+        document.getElementById("button_layer").style.visibility = "hidden";
+        document.getElementById("details").style.cssText = "filter: blur(0px);";
+
     });
 };
 
