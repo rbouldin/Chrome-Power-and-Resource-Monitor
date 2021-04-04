@@ -15,88 +15,55 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		
-		boolean NATIVE_MESSAGING_ENABLED = true;
-		boolean SERVER_MESSAGING_ENABLED = false;
+		final String STOP_MONITORING_PHRASE = "stop monitoring";
+		String nativeMessage = "";
+		RunOptions options = new RunOptions(args);
 		
-		boolean EXIT_SIGNAL = false;
-//		String EXIT_PHRASE = "EXIT_NATIVE";
-		
-		int num_records = 60;
-		
-		// See if the user has used any options
-		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("-records")) {
-				if (i+1 < args.length && Character.isDigit(args[i+1].charAt(0))) {
-					try {
-						int input = Integer.parseInt(args[i+1]);
-						num_records = input;
-						i++;
-					} catch (NumberFormatException e) {
-						System.err.println("Invalid args at \"" + args[0] + "\".");
-						System.exit(1);
-					}
-				}
-			}
-			else if (args[i].equals("-native")) {
-            	if (i+1 < args.length) {
-            		String op = args[i+1];
-	            	if (op.equalsIgnoreCase("off")) {
-	            		NATIVE_MESSAGING_ENABLED = false;
-	            		i++;
-	            	}
-	            	else if (op.equalsIgnoreCase("on")) {
-	            		NATIVE_MESSAGING_ENABLED = true;
-	            		i++;
-	            	}
-	            	else {
-	            		System.err.println("Unknown args at \"" + args[i] + "\".");
-	            		System.exit(1);
-	            	}
-            	} 
-            	else {
-            		NATIVE_MESSAGING_ENABLED = true;
-            	}
-            }
-            else if (args[i].equals("-server")) {
-            	if (i+1 < args.length) {
-            		String op = args[i+1];
-	            	if (op.equalsIgnoreCase("off")) {
-	            		SERVER_MESSAGING_ENABLED = false;
-	            		i++;
-	            	}
-	            	else if (op.equalsIgnoreCase("on")) {
-	            		SERVER_MESSAGING_ENABLED = true;
-	            		i++;
-	            	}
-	            	else {
-	            		System.err.println("Unknown args at \"" + args[i] + "\".");
-	            		System.exit(1);
-	            	}
-            	} 
-            	else {
-            		SERVER_MESSAGING_ENABLED = true;
-            	}
-            }
-            else if (args[i].equals("-clean")) {
-                Monitor.deleteOutputFiles();
-                System.exit(0);
-            } else {
-                System.err.println("Unknown args at \"" + args[i] + "\".");
-//                System.exit(1);
-            }
-        }
-		
+		LogFileHandler messageLogger = new LogFileHandler();
+		if (options.NATIVE_LOGGING_ENABLED) {
+			messageLogger.startNativeLog();
+		}
 		
 		// The initial updateData() will create the CSV output files and 
 		// sleeping for 4 seconds will ensure the files have enough time to 
 		// generate. Not sleeping for long enough may create FileNotFound 
 		// Exceptions.
-		Monitor.updateData();
-		TimeUnit.SECONDS.sleep(5);
+//		Monitor.updateData();
+//		TimeUnit.SECONDS.sleep(5);
+		
+		// Read the first Native Message from Standard Input. 
+		// The first message should be "connected" to establish that messaging is working.
+		if (options.NATIVE_INPUT_ENABLED) {
+			
+			nativeMessage = NativeMessage.read(System.in);
+			
+			if (options.NATIVE_LOGGING_ENABLED) {
+				messageLogger.logNativeMessage("Recieved message: " + nativeMessage);
+			}
+			
+			String value = NativeMessage.getJSONValue(nativeMessage, "message");
+			if (!value.equalsIgnoreCase("connected")) {
+				System.err.println("Unexpected native message: '" + value + "'");
+			}
+			
+		}
 		
 		MonitorLog log = new MonitorLog("bobby", "3", "[]", "2");
-		int i = num_records;
-		while (i > 0 && !EXIT_SIGNAL) {
+		int i = options.NUM_RECORDS;
+		while (i > 0) {
+			// Read Native Message from Standard Input
+			if (options.NATIVE_INPUT_ENABLED) {
+				nativeMessage = NativeMessage.read(System.in);
+				if (options.NATIVE_LOGGING_ENABLED) {
+					messageLogger.logNativeMessage("Recieved message: " + nativeMessage);
+				}
+				String message = NativeMessage.getJSONValue(nativeMessage, "message");
+				if (message.equalsIgnoreCase(STOP_MONITORING_PHRASE)) {
+					System.err.println("Monitoring stopped by Native Message.");
+					break;
+				}
+			}
+			
 			// Update power and resource monitoring files.
 			Monitor.updateData();
 			TimeUnit.SECONDS.sleep(2);
@@ -112,13 +79,13 @@ public class Main {
 			// Append record data to log file.
 			log.appendRecord(newRecord, recordAsJSON);
 			
-			// Send Native Message to Standard Output
-			if (NATIVE_MESSAGING_ENABLED) {
+			if (options.NATIVE_OUTPUT_ENABLED) {
+				// Send Native Message to Standard Output
 				NativeMessage.send(recordAsJSON);
+				if (options.NATIVE_LOGGING_ENABLED) {
+					messageLogger.logNativeMessage("Sent message: " + recordAsJSON);
+				}
 			}
-			
-			// Read Native Message from Standard Input
-//			String jsonRequest = NativeMessage.read(System.in);
 			
 			i--;
 		}
@@ -128,9 +95,13 @@ public class Main {
 		TimeUnit.SECONDS.sleep(5);
 		Monitor.deleteOutputFiles();
 		
+		if (options.NATIVE_LOGGING_ENABLED) {
+			messageLogger.closeNativeLog();
+		}
+		
 		// Send session log to the server.
 		// Server: IP = "52.91.154.176", Port = "8000"
-		if (SERVER_MESSAGING_ENABLED) {
+		if (options.SERVER_MESSAGING_ENABLED) {
 			String serverURL = "http://52.91.154.176:8000/data/";
 			ServerHandler server = new ServerHandler(serverURL);
 			String serverResponse = server.postJSONMessage(log.toJSON());
@@ -138,6 +109,8 @@ public class Main {
 				System.err.println();
 				System.err.println(serverResponse);
 			}
+			
+			// TODO : GET list of suggestions
 			
 			TimeUnit.SECONDS.sleep(5);
 			server.closeConnection();

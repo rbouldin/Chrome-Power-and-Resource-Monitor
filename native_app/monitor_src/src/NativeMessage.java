@@ -46,6 +46,18 @@ public class NativeMessage {
 
 		return new String(b, "UTF-8");
 	}
+	
+	
+	public static String getJSONValue(String jsonString, String id) {
+		String[] json = jsonString.split("\"");
+		for (int i = 0; i < json.length; i++) {
+			if (json[i].equalsIgnoreCase(id) 
+					&& i+2 < json.length && json[i+1].equals(":")) {
+				return json[i+2];
+			}
+		}
+		return null;
+	}
 
 	
 	/**
