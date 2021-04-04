@@ -1,13 +1,10 @@
 /** 
  *  Main.java
  *
- *  VERSION: 2021.04.01
+ *  VERSION: 2021.04.03
  *  AUTHORS: Rae Bouldin, Zinan Guo
- *
- *  DESCRIPTION:
- *    ...
  * 
- *  (Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech)
+ *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
 package src;
 
@@ -18,18 +15,87 @@ public class Main {
 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		
-		String EXIT_PHRASE = "EXIT_NATIVE";
+		boolean NATIVE_MESSAGING_ENABLED = true;
+		boolean SERVER_MESSAGING_ENABLED = false;
+		
 		boolean EXIT_SIGNAL = false;
-		MonitorLog log = new MonitorLog("001", "1.0", "[]", "0");
-
+//		String EXIT_PHRASE = "EXIT_NATIVE";
+		
+		int num_records = 60;
+		
+		// See if the user has used any options
+		for (int i = 0; i < args.length; i++) {
+			if (args[i].equals("-records")) {
+				if (i+1 < args.length && Character.isDigit(args[i+1].charAt(0))) {
+					try {
+						int input = Integer.parseInt(args[i+1]);
+						num_records = input;
+						i++;
+					} catch (NumberFormatException e) {
+						System.err.println("Invalid args at \"" + args[0] + "\".");
+						System.exit(1);
+					}
+				}
+			}
+			else if (args[i].equals("-native")) {
+            	if (i+1 < args.length) {
+            		String op = args[i+1];
+	            	if (op.equalsIgnoreCase("off")) {
+	            		NATIVE_MESSAGING_ENABLED = false;
+	            		i++;
+	            	}
+	            	else if (op.equalsIgnoreCase("on")) {
+	            		NATIVE_MESSAGING_ENABLED = true;
+	            		i++;
+	            	}
+	            	else {
+	            		System.err.println("Unknown args at \"" + args[i] + "\".");
+	            		System.exit(1);
+	            	}
+            	} 
+            	else {
+            		NATIVE_MESSAGING_ENABLED = true;
+            	}
+            }
+            else if (args[i].equals("-server")) {
+            	if (i+1 < args.length) {
+            		String op = args[i+1];
+	            	if (op.equalsIgnoreCase("off")) {
+	            		SERVER_MESSAGING_ENABLED = false;
+	            		i++;
+	            	}
+	            	else if (op.equalsIgnoreCase("on")) {
+	            		SERVER_MESSAGING_ENABLED = true;
+	            		i++;
+	            	}
+	            	else {
+	            		System.err.println("Unknown args at \"" + args[i] + "\".");
+	            		System.exit(1);
+	            	}
+            	} 
+            	else {
+            		SERVER_MESSAGING_ENABLED = true;
+            	}
+            }
+            else if (args[i].equals("-clean")) {
+                Monitor.deleteOutputFiles();
+                System.exit(0);
+            } else {
+                System.err.println("Unknown args at \"" + args[i] + "\".");
+//                System.exit(1);
+            }
+        }
+		
+		
 		// The initial updateData() will create the CSV output files and 
 		// sleeping for 4 seconds will ensure the files have enough time to 
 		// generate. Not sleeping for long enough may create FileNotFound 
 		// Exceptions.
 		Monitor.updateData();
-		TimeUnit.SECONDS.sleep(3);
+		TimeUnit.SECONDS.sleep(5);
 		
-		int i = 10;
+		MonitorLog log = new MonitorLog("bobby", "3", "[]", "2");
+		int i = num_records;
 		while (i > 0 && !EXIT_SIGNAL) {
 			// Update power and resource monitoring files.
 			Monitor.updateData();
@@ -47,7 +113,9 @@ public class Main {
 			log.appendRecord(newRecord, recordAsJSON);
 			
 			// Send Native Message to Standard Output
-			NativeMessage.send(recordAsJSON);
+			if (NATIVE_MESSAGING_ENABLED) {
+				NativeMessage.send(recordAsJSON);
+			}
 			
 			// Read Native Message from Standard Input
 //			String jsonRequest = NativeMessage.read(System.in);
@@ -61,13 +129,19 @@ public class Main {
 		Monitor.deleteOutputFiles();
 		
 		// Send session log to the server.
-////		String sessionLog = log.toJSON();
-//		String message = "{\"user\":\"robbie\",\"avg_cpu_power\":\"69\",\"avg_cpu_usage\":\"5\",\"avg_gpu_usage\":\"34\",\"avg_mem_usage\":\"19\",\"batch\":\"2\"}";  //"{\"batch\":\"3\"}";
-//		System.out.println(message);
-//		ServerHandler server = new ServerHandler("http://52.91.154.176:8000/data/");
-//		server.postJSONMessage(message);
-////		server.postJSONMessage(sessionLog);
-//		server.closeConnection();
+		// Server: IP = "52.91.154.176", Port = "8000"
+		if (SERVER_MESSAGING_ENABLED) {
+			String serverURL = "http://52.91.154.176:8000/data/";
+			ServerHandler server = new ServerHandler(serverURL);
+			String serverResponse = server.postJSONMessage(log.toJSON());
+			if (!serverResponse.equals("OK")) {
+				System.err.println();
+				System.err.println(serverResponse);
+			}
+			
+			TimeUnit.SECONDS.sleep(5);
+			server.closeConnection();
+		}
 
 	}
 

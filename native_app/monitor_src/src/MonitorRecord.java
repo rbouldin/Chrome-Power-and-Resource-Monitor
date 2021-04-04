@@ -5,9 +5,9 @@
  *  AUTHORS: Rae Bouldin, Zinan Guo
  *
  *  DESCRIPTION:
- *    ...
+ *    Represents a single data point in a monitoring log.
  * 
- *  (Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech)
+ *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
 package src;
 

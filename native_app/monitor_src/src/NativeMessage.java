@@ -1,13 +1,10 @@
 /** 
  *  NativeMessage.java
  *
- *  VERSION: 2021.04.01
+ *  VERSION: 2021.04.03
  *  AUTHORS: Rae Bouldin, Zinan Guo
- *
- *  DESCRIPTION:
- *    ...
  * 
- *  (Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech)
+ *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
 package src;
 
@@ -17,12 +14,23 @@ import java.io.InterruptedIOException;
 
 public class NativeMessage {
 	
+	
+	/**
+	 *  Sends a JSON formatted String to Standard Output in byte representation
+	 *  so that it can be accepted through Native Messaging by a Google Chrome 
+	 *  extension.
+	 */
 	public static void send(String jsonString) throws IOException {
 		System.out.write(getBytes(jsonString.length()));
 		System.out.write(jsonString.getBytes("UTF-8"));
 		System.out.flush();
 	}
 	
+	
+	/**
+	 *  Reads the byte representation sent from Standard Input through Native 
+	 *  Messaging and translates it into a JSON formatted String.
+	 */
 	public static String read(InputStream in) throws IOException {
 		byte[] b = new byte[4];
 		in.read(b); // Read the size of message
@@ -39,6 +47,10 @@ public class NativeMessage {
 		return new String(b, "UTF-8");
 	}
 
+	
+	/**
+	 *  Gets the byte array representation of an integer.
+	 */
 	private static byte[] getBytes(int length) {
 		byte[] bytes = new byte[4];
 		bytes[0] = (byte) (length & 0xFF);
@@ -48,9 +60,14 @@ public class NativeMessage {
 		return bytes;
 	}
 	
+	
+	/**
+	 * Get the integer representation of a byte array.
+	 */
 	private static int getInt(byte[] bytes) {
 		return (bytes[3] << 24) & 0xff000000 | (bytes[2] << 16) & 0x00ff0000 | (bytes[1] << 8) & 0x0000ff00
 				| (bytes[0] << 0) & 0x000000ff;
 	}
 
+	
 }
