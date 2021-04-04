@@ -9,6 +9,8 @@ In run_native.bat you can use the following options to run the program in differ
 java -jar "monitor.jar" [OPTIONS]
 ```
 ```
+OPTIONS:
+
 -records int            Changes the number of records recorded (the number of times the 
                         monitor will loop) to an integer number of your choice. Each loop
                         should take ~2-3 seconds. Without this option, the default number
@@ -27,7 +29,7 @@ java -jar "monitor.jar" [OPTIONS]
 -logServer              Ouput the messages sent back and forth in server messaging to a 
                         ServerMessageLog txt file.
 
--clean             Deletes any output files created by previous runs then exits.
+-clean                  Deletes any output files created by previous runs then exits.
 ```
 
 ## Setting up the Native App and Native Messaging
