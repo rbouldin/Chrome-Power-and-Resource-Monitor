@@ -6,15 +6,27 @@ When you launch the Native App, there will be a couple-second-delay before you s
 ### Run Options:
 In run_native.bat you can use the following options to run the program in different modes.
 ```
-"monitor.jar [-records int] [-native on] [-native off] [-server on] [-server off] [-clean]"
+java -jar "monitor.jar" [OPTIONS]
 ```
 ```
--records int       Changes the number of records recorded (the number of times the 
-                   monitor will loop) to an integer number of your choice. Each loop
-                   should take ~2-3 seconds. Without this option, the default number
-                   of records recorded is 60.
--native [on/off]   Turn native messaging on or off. It is ON by default.
--server [on/off]   Turn server messaging on or off. It is OFF by default.
+-records int            Changes the number of records recorded (the number of times the 
+                        monitor will loop) to an integer number of your choice. Each loop
+                        should take ~2-3 seconds. Without this option, the default number
+                        of records recorded is 60.
+                        
+-native [on|off]        Turn native messaging output and input on or off. It is ON by default.
+-nativeOutput [on|off]  Turn native messaging output on or off. It is ON by default.
+-nativeInput [on|off]   Turn native messaging input on or off. It is ON by default.
+
+
+-server [on|off]        Turn server messaging on or off. It is OFF by default.
+
+-logNative              Ouput the messages sent back and forth in native messaging to a 
+                        NativeMessageLog txt file.
+
+-logServer              Ouput the messages sent back and forth in server messaging to a 
+                        ServerMessageLog txt file.
+
 -clean             Deletes any output files created by previous runs then exits.
 ```
 
