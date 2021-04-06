@@ -1,7 +1,7 @@
 /** 
  *  MonitorLog.java
  *
- *  VERSION: 2021.04.03
+ *  VERSION: 2021.04.06
  *  AUTHORS: Rae Bouldin
  *
  *  DESCRIPTION:
@@ -12,11 +12,15 @@
  */
 package src;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 public class MonitorLog {
 	
+	private Date sessionDate;
 	private List<MonitorRecord> monitorRecords;
 	
 	private String user_ID;
@@ -25,13 +29,16 @@ public class MonitorLog {
 	private String num_tabs;
 	private List<String> all_records;
 	
+	public static final SimpleDateFormat sessionIDFormat = new SimpleDateFormat("YYDDHHmmss");
 	
-	public MonitorLog(String userID, String sessionID, String suggestionsAsJsonArray, String numTabs) {
+	
+	public MonitorLog(String userID, String suggestionsAsJsonArray, String numTabs) {
+		
 		this();
 		this.user_ID = "\"" + userID + "\"";
-		this.session_ID = "\"" + sessionID + "\"";
 		this.suggestions = suggestionsAsJsonArray;
 		this.num_tabs = "\"" + numTabs + "\"";
+		
 	}
 	
 	
@@ -39,12 +46,85 @@ public class MonitorLog {
 	 * The default constructor initializes all variables as empty JSON fields.
 	 */
 	public MonitorLog() {
-		monitorRecords = new ArrayList<MonitorRecord>();
-		user_ID = "\"\"";
-		session_ID = "\"\"";
-		suggestions = "\"\"";
-		num_tabs = "\"\"";
-		all_records = new ArrayList<String>();
+		
+		this.sessionDate = Calendar.getInstance().getTime();
+		this.monitorRecords = new ArrayList<MonitorRecord>();
+		
+		this.user_ID = "\"\"";
+		this.session_ID = "\"" + sessionIDFormat.format(sessionDate) + "\"";
+		this.suggestions = "[]";
+		this.num_tabs = "\"\"";
+		
+		this.all_records = new ArrayList<String>();
+		
+	}
+	
+	
+	/**
+	 * @return the user_ID for this MonitorLog
+	 */
+	public String getUserID() {
+		return user_ID;
+	}
+	
+	
+	/**
+	 *  Change the user_ID to the input parameter.
+	 * 
+	 *  @return True if user_ID was set successfully; False otherwise.
+	 */
+	public boolean setUserID(String userID) {
+		if (userID != null) {
+			this.user_ID = "\"" + userID + "\"";
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 * @return the session_ID for this MonitorLog
+	 */
+	public String getSessionID() {
+		return session_ID;
+	}
+	
+	
+	/**
+	 * @return the sessionDate for this MonitorLog
+	 */
+	public Date getSessionDate() {
+		return sessionDate;
+	}
+	
+	
+	/**
+	 *  Change the suggestions to the input parameter.
+	 * 
+	 *  @return True if suggestions was set successfully; False otherwise.
+	 */
+	public boolean setSuggestions(String suggestionsAsJsonArray) {
+		if (suggestionsAsJsonArray != null 
+				&& suggestionsAsJsonArray.charAt(0) == '[' 
+				&& suggestionsAsJsonArray.charAt(suggestionsAsJsonArray.length()-1) == ']') {
+			this.suggestions = suggestionsAsJsonArray;
+			return true;
+		}
+		return false;
+	}
+	
+	
+	/**
+	 *  Change the num_tabs to the input parameter.
+	 * 
+	 *  @return True if num_tabs was set successfully; False otherwise.
+	 */
+	public boolean setNumTabs(String numTabs) {
+		if (numTabs != null) {
+			this.num_tabs = "\"" + numTabs + "\"";
+			return true;
+		}
+		return false;
 	}
 	
 	
@@ -67,10 +147,10 @@ public class MonitorLog {
 	 *  format:
 	 *  
 	 *  {
-     *    "user_ID":"username",
+     *    "user":"username",
      *    "session_ID":"0",
      *    "suggestions":[],
-     *    "num_tabs":"0",
+     *    "tabs":"0",
      *    "avg_cpu_power":"0.0000",
      *    "avg_cpu_usage":"0.0000",
      *    "avg_gpu_usage":"0.0000",
@@ -117,8 +197,9 @@ public class MonitorLog {
 		
 		StringBuilder log = new StringBuilder();
 		log.append("{");
+		log.append("\"batch\":").append("\"0\"").append(","); // TODO: remove after formatting server
 		log.append("\"user\":").append(user_ID).append(",");
-		log.append("\"batch\":").append(session_ID).append(",");
+		log.append("\"session_ID\":").append(session_ID).append(",");
 		log.append("\"suggestions\":").append(suggestions).append(",");
 		log.append("\"tabs\":").append(num_tabs).append(",");
 		log.append("\"avg_cpu_power\":").append(avg_cpu_power).append(",");

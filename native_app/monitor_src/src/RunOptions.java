@@ -1,7 +1,7 @@
 /** 
  *  RunOptions.java
  *
- *  VERSION: 2021.04.04
+ *  VERSION: 2021.04.05
  *  AUTHORS: Rae Bouldin
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -15,8 +15,12 @@ public class RunOptions {
 	public boolean NATIVE_INPUT_ENABLED = true;
 	public boolean NATIVE_OUTPUT_ENABLED = true;
 	public boolean NATIVE_LOGGING_ENABLED = false;
+	
 	public boolean SERVER_MESSAGING_ENABLED = false;
 	public boolean SERVER_LOGGING_ENABLED = false;
+	
+	public boolean LOGGING_ENABLED = false;
+	public boolean ERROR_LOGGING_ENABLED = false;
 	
 	private String[] args;
 	
@@ -116,6 +120,12 @@ public class RunOptions {
             	else {
             		System.err.println("Error parsing '-server'");
             	}
+            } 
+            else if (args[i].equals("-log")) {
+            	LOGGING_ENABLED = true;
+            }
+            else if (args[i].equals("-logErrors")) {
+            	ERROR_LOGGING_ENABLED = true;
             }
             else if (args[i].equals("-logNative")) {
             	NATIVE_LOGGING_ENABLED = true;
