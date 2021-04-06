@@ -1,25 +1,33 @@
 body {
     height: 320px;
-    width: 450px;
+    width: 480px;
     z-index:0;
     font-family: Verdana, sans-serif;
 }
 
+header {
+    height: 25px;
+    margin: 0;
+}
+
 main {
     position:relative;
-    margin: 10px 8px 8px 8px;
+    margin: 0px 8px 0px 8px;
     padding: 0px;
-    height: 250px;
-    width: 100%;
+    height: 300px;
+    width: calc(100% - 16px);
 }
 
 #details {
     position:absolute;
     margin: 0px;
-    padding: 10px 15px 15px 15px;
+    margin-bottom: 10px;
+    padding: 15px 15px 15px 15px;
+    width: calc(100% - 30px);
+    height: calc(100% - 40px);
     color: white;
     background-color: #3a4a53; 
-    filter: blur(3px);
+    filter: blur(3px) brightness(70%);
     z-index:10;
 }
 
@@ -33,8 +41,7 @@ main {
 }
 
 .header {
-    margin: 8px 8px 2px 8px;
-    margin-bottom: 0px;
+    margin: 8px 8px 8px 8px;
 }
 
 h2 {
@@ -67,25 +74,42 @@ h2 {
     margin: 4px 4px 4px 4px;
 }
 
+.power_info {
+    font-size : 14px;
+    margin-top : 2px;
+    margin-bottom : 2px;
+}
+
+
 #power_chart {
     margin: 15px 4px 4px 4px;
 }
 
+.right_column {
+    text-align: right;
+    margin-right: 4px;
+}
+
 #stop_monitor {
-    height: 40px;
-    width: 60px;
+    font-size: 14px;
+    height: 25px;
+    width: 120px;
     outline: none;
 }
 
 #start_monitor {
-    height: 40px;
-    width: 80px;
-    outline: none;
+    /* font-size : 20px; */
+    /* height: 50px;
+    width: 100px; */
     justify-content: center;
     align-items: center;
 }
 
 #monitor_timer{
+    text-align: right;
+    margin: 0px;
+    margin-top: 6px;
+    margin-right: 6px;
     color: white;
 }
 

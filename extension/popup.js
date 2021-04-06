@@ -16,7 +16,7 @@ var formatTime = function (TimeDiff) {
     var min = parseInt(afterHour / (60 * 1000));
     var afterMin = TimeDiff - hour * 60 * 60 * 1000 - min * 60 * 1000;
     var second = parseInt(afterMin / 1000)
-    var output = hour.toString() + 'H ' + min.toString() + 'M ' + second.toString() + 'S';
+    var output = hour.toString() + ':' + min.toString() + ':' + second.toString() + 's';
     return output;
 }
 
@@ -29,7 +29,14 @@ var timer = function () {
 
 //native message
 var message = function (msg) {
-    document.getElementById("cpu_info").innerText = "CPU usage: " + msg.cpuTotal + "%";
+    let cpu_data = parseFloat(msg.cpu_usage);
+    let gpu_data = parseFloat(msg.gpu_usage);
+    let mem_data = parseFloat(msg.mem_usage);
+    document.getElementById("curr_power").innerText = "Current power usage: " + cpu_data.toFixed(2) + "W";
+    document.getElementById("cpu_info").innerText = "CPU usage: " + cpu_data.toFixed(2) + "%";
+    document.getElementById("gpu_info").innerText = "GPU usage: " + gpu_data.toFixed(2) + "%";
+    document.getElementById("mem_info").innerText = "MEM usage: " + mem_data.toFixed(2) + "%";
+    updateData(cpu_data, gpu_data, mem_data)
 }
 
 var disconnect = function () {
@@ -71,7 +78,9 @@ var processRes = function (data) {
     document.getElementById("cpu_info").innerText = "CPU usage: " + cpu + "%";
     document.getElementById("gpu_info").innerText = "GPU usage: " + gpu + "%";
 }
-chrome.runtime.getPackageDirectoryEntry(function (root) {
+
+//read data from file
+/* chrome.runtime.getPackageDirectoryEntry(function (root) {
     root.getFile("data/output_RES.csv", {}, function (fileEntry) {
         fileEntry.file(function (file) {
             var reader = new FileReader();
@@ -92,53 +101,53 @@ chrome.runtime.getPackageDirectoryEntry(function (root) {
             reader.readAsText(file);
         });
     });
-});
+}); */
 
 
 //chart
-google.charts.load('current', { 'packages': ['corechart'] });
-google.charts.setOnLoadCallback(drawChart);
+var data;
+var chart;
+var option;
+var chart_element;
+google.charts.load('current', { 'packages': ['corechart'] }).then(function () {
+    //google.charts.setOnLoadCallback(drawChart);
 
-function drawChart() {
-    var element = document.getElementById('power_chart');
-
-    var data = new google.visualization.DataTable();
+    data = new google.visualization.DataTable();
     data.addColumn('number', 'Time(Second)');
-    data.addColumn('number', 'Power usage');
-    data.addColumn('number', 'Memory usage');
     data.addColumn('number', 'CPU usage');
+    data.addColumn('number', 'GPU usage');
+    data.addColumn('number', 'MEM usage');
 
-    data.addRows([
-        [1, 37.8, 80.8, 41.8],
-        [2, 30.9, 69.5, 32.4],
-        [3, 25.4, 57, 25.7],
-        [4, 11.7, 18.8, 10.5],
-        [5, 11.9, 17.6, 10.4],
-        [6, 8.8, 13.6, 7.7],
-        [7, 7.6, 12.3, 9.6],
-        [8, 12.3, 29.2, 10.6],
-        [9, 16.9, 42.9, 14.8],
-        [10, 12.8, 30.9, 11.6],
-        [11, 5.3, 7.9, 4.7],
-        [12, 6.6, 8.4, 5.2],
-        [13, 4.8, 6.3, 3.6],
-        [14, 4.2, 6.2, 3.4]
-    ]);
+    data.addRows([[0, 0, 0, 0],
+    [1, 0, 0, 0]]);
 
-    var options = {
+    options = {
         chart: {
             //title: 'Power monitoring data',
         },
-        width: 380,
-        height: 160,
+        width: 420,
+        height: 170,
+        chartArea: { width: '100%', height: '100%' },
+        theme: 'maximized',
         backgroundColor: 'transparent',
         hAxis: {
-            textStyle: { color: '#FFF', fontSize: 10 },
-            gridlines: {
+            textStyle:
+            {
+                color: '#FFF',
+                fontSize: 10
+            },
+            baselineColor: {
                 color: 'transparent'
+            },
+            gridlines:
+            {
+                color: 'transparent',
+                count: 10
             }
         },
         vAxis: {
+            viewWindowMode: 'maximized',
+            viewWindow: { min: 0, max: 100 },
             textStyle: { color: '#FFF', fontSize: 10 },
             baselineColor: {
                 color: 'transparent'
@@ -147,10 +156,21 @@ function drawChart() {
         legend: {
             textStyle: { color: '#FFF', fontSize: 10 }
         },
-        theme: 'maximized'
+
     };
 
-    var chart = new google.visualization.LineChart(element);
+    let drawChart = function () {
+        chart_element = document.getElementById('power_chart');
+        chart = new google.visualization.LineChart(chart_element);
+        chart.draw(data, options);
+    }
+    google.charts.setOnLoadCallback(drawChart);
+})
+
+var chart_index = 0;
+let updateData = function (cpu_num, gpu_num, mem_num) {
+    chart_index++;
+    data.addRow([chart_index, cpu_num, gpu_num, mem_num]);
     chart.draw(data, options);
 }
 
@@ -168,6 +188,9 @@ click_events = function () {
         timeUpdate = setInterval(timer, 1000);
         document.getElementById("button_layer").style.visibility = "hidden";
         document.getElementById("details").style.cssText = "filter: blur(0px);";
+
+    });
+    document.getElementById("stop_monitor").addEventListener("click", function () {
 
     });
 };
