@@ -1,19 +1,48 @@
 # Native App and Native Messaging README
 ## Current Functionality
-There will be a couple-second-delay when you launch the Native App, due to initial setup within the app itself. The Native App currently runs for 60 loops and then stops. Open Hardware Monitor needs to be running for the program to work properly, but the program will still run without errors if Open Hardware Monitor is not downloaded or running.
+### Summary:
+When you launch the Native App, there will be a couple-second-delay before you see any monitoring due to initial setup within the app. Currently, the Native App runs for 60 loops and then stops. Open Hardware Monitor needs to be running for the program to work properly, but the program will still run without errors if Open Hardware Monitor is not downloaded or running. By default, Native Messaging is enabled and Server Messaging is disabled. See the run options below for how to change this.
+
+### Run Options:
+In run_native.bat you can use the following options to run the program in different modes.
+```
+java -jar "monitor.jar" [OPTIONS]
+```
+```
+OPTIONS:
+
+-records int            Changes the number of records recorded (the number of times the 
+                        monitor will loop) to an integer number of your choice. Each loop
+                        should take ~2-3 seconds. Without this option, the default number
+                        of records recorded is 60.
+                        
+-native [on|off]        Turn native messaging output and input on or off. It is ON by default.
+-nativeOutput [on|off]  Turn native messaging output on or off. It is ON by default.
+-nativeInput [on|off]   Turn native messaging input on or off. It is ON by default.
+
+-server [on|off]        Turn server messaging on or off. It is OFF by default.
+
+-log                    Output program actions (including errors, native messaging, and server
+                        messaging) to a file named LOG-<SessionID>.txt
+-logNative              Ouput the messages sent back and forth in native messaging to a 
+                        file named LOG-<SessionID>-NativeMessage.txt
+-logServer              Ouput the messages sent back and forth in server messaging to a 
+                        file named LOG-<SessionID>-Server.txt
+
+-clean                  Deletes any output files created by previous runs then exits.
+```
 
 ## Setting up the Native App and Native Messaging
 ### Native App Setup
 1. If you haven't already, download [Open Hardware Monitor](https://openhardwaremonitor.org/).
-3. Create a Java project using the files in monitor_src. 
-4. Download [GSON 2.6.2](https://search.maven.org/artifact/com.google.code.gson/gson/2.6.2/jar) and configure the project build path to include the gson-2.6.2.jar file.
-5. Check that the Java project runs as expected.
-6. Export the Java project to a runnable jar file named "monitor.jar" inside the "native_app" folder on your machine.
-7. Check that "monitor.jar" runs as expected using "java -jar monitor.jar" from the directory it is in.
+2. Download "monitor.jar" from [Google Drive](https://drive.google.com/file/d/1td2oqR6QKf5A3exWgvhPubAaLloNgFoU/view?usp=sharing); or Create a Java project using the files in monitor_src. 
+3. If creating a Java project:
+    * Download [GSON 2.6.2](https://search.maven.org/artifact/com.google.code.gson/gson/2.6.2/jar) and configure the project build path to include the gson-2.6.2.jar file.
+    * Check that the Java project runs as expected.
+    * Export the Java project to a runnable jar file named "monitor.jar" inside the "native_app" folder on your machine.
+    * Check that "monitor.jar" runs as expected using "java -jar monitor.jar" from the directory it is in.
 
 ### Native Messaging Setup
-1. Update native.json so that "chrome-extension://paste_your_extension_ID_here/" contains your extension ID (e.g. "chrome-extension://lconabdfkpmfliemkbbjccjkojgcoapm/").
-2. update the registry key com.chrome.monitor to point to the native.json file
-.
-.
-.
+1. Edit native.json so that "chrome-extension://paste_your_extension_ID_here/" contains your extension ID (e.g. "chrome-extension://lconabdfkpmfliemkbbjccjkojgcoapm/").
+2. Run add_com_chrome_monitor.bat to add the com.chrome.monitor registry key; or update the registry manually using Registry Editor. This will allow the Chrome extension pass messages back and forth with the Native Application.
+3. Check that "run_native.bat" launches the program as expected.

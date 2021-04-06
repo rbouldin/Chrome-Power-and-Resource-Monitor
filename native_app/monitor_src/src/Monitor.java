@@ -9,7 +9,7 @@
  *    holds data about the System resources and about Open Hardware Monitor's 
  *    Power Sensors.
  * 
- *  (Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech)
+ *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
 package src;
 

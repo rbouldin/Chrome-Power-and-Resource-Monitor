@@ -7,3 +7,4 @@ class ResourceRecord(models.Model):
     avg_gpu_usage = models.FloatField()
     avg_mem_usage = models.FloatField()
     batch = models.IntegerField()
+    tabs = models.IntegerField()
