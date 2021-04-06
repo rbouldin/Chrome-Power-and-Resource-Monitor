@@ -20,14 +20,14 @@ OPTIONS:
 -nativeOutput [on|off]  Turn native messaging output on or off. It is ON by default.
 -nativeInput [on|off]   Turn native messaging input on or off. It is ON by default.
 
-
 -server [on|off]        Turn server messaging on or off. It is OFF by default.
 
+-log                    Output program actions (including errors, native messaging, and server
+                        messaging) to a file named LOG-<SessionID>.txt
 -logNative              Ouput the messages sent back and forth in native messaging to a 
-                        NativeMessageLog txt file.
-
+                        file named LOG-<SessionID>-NativeMessage.txt
 -logServer              Ouput the messages sent back and forth in server messaging to a 
-                        ServerMessageLog txt file.
+                        file named LOG-<SessionID>-Server.txt
 
 -clean                  Deletes any output files created by previous runs then exits.
 ```
