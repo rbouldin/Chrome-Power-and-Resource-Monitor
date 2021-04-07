@@ -85,7 +85,7 @@ var disconnect = function () {
 
 var send_post = function(user_id) {
     console.log("user id: ", user_id);
-    port.postMessage({ "message": "POST user", "user_id": "" + user_id, "suggestions": [], "tabs:": "" + bg.count });
+    port.postMessage({ "message": "POST user", "user_id": "" + user_id, "suggestions": [], "tabs": "" + bg.count });
 }
 
 var native_connection = function () {
