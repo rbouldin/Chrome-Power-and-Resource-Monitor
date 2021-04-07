@@ -23,4 +23,4 @@
 ::   -clean                  Deletes any output files created by previous runs then exits.
 ::
 @echo off
-java -jar "monitor.jar" -server off -log %*
+java -jar "monitor.jar" -server off -logNative %*
