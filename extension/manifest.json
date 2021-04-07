@@ -1,7 +1,7 @@
 {
-    "name": "Power Monitor",
+    "name": "Chrome Resourse Monitor",
     "version": "1.0",
-    "description": "Power Monitor extension",
+    "description": "Power Monitor extension, Icons made by Vectors Market from https://www.flaticon.com/",
     "manifest_version": 2,
     "permissions": [
         "storage",
@@ -11,6 +11,7 @@
         "scripts": ["background.js"]
     },
     "browser_action": {
+        "default_icon": "image/icon_gauge.png",
         "default_popup": "popup.html"
     },
     "content_security_policy": "script-src 'self' https://www.gstatic.com; object-src 'self'"
