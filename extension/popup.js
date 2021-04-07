@@ -27,7 +27,10 @@ var timer = function () {
 }
 
 
+
+
 //native message
+var port;
 var message = function (msg) {
     let cpu_data = parseFloat(msg.cpu_usage);
     let gpu_data = parseFloat(msg.gpu_usage);
@@ -47,6 +50,11 @@ var native_connection = function () {
     port = chrome.runtime.connectNative("com.chrome.monitor");
     port.onMessage.addListener(message);
     port.onDisconnect.addListener(disconnect);
+    port.postMessage({ "message": "POST user", "user_id": "id#", "suggestions": [], "tabs:": "" + bg.count });
+}
+
+var newTimer = function () {
+    port.postMessage({ "message": "GET MonitorRecord" });
 }
 
 //content
@@ -118,8 +126,7 @@ google.charts.load('current', { 'packages': ['corechart'] }).then(function () {
     data.addColumn('number', 'GPU usage');
     data.addColumn('number', 'MEM usage');
 
-    data.addRows([[0, 0, 0, 0],
-    [1, 0, 0, 0]]);
+    data.addRow([0, 0, 0, 0]);
 
     options = {
         chart: {
@@ -131,6 +138,7 @@ google.charts.load('current', { 'packages': ['corechart'] }).then(function () {
         theme: 'maximized',
         backgroundColor: 'transparent',
         hAxis: {
+            viewWindow: { min: 0, max: 10 },
             textStyle:
             {
                 color: '#FFF',
@@ -180,18 +188,33 @@ chrome.runtime.onMessage.addListener(
             update_tabCount();
     });
 
-click_events = function () {
+let clear_chart = function () {
+    data = new google.visualization.DataTable();
+    data.addColumn('number', 'Time(Second)');
+    data.addColumn('number', 'CPU usage');
+    data.addColumn('number', 'GPU usage');
+    data.addColumn('number', 'MEM usage');
+    data.addRow([0, 0, 0, 0]);
+    chart.draw(data, options);
+}
+
+let click_events = function () {
     document.getElementById("start_monitor").addEventListener("click", function () {
         monitorStarted = true;
         native_connection();
         monitorStartTime = new Date();
-        timeUpdate = setInterval(timer, 1000);
+        timeUpdate = setInterval(newTimer, 1000);
         document.getElementById("button_layer").style.visibility = "hidden";
         document.getElementById("details").style.cssText = "filter: blur(0px);";
-
     });
     document.getElementById("stop_monitor").addEventListener("click", function () {
+        monitorStarted = false;
+        clearInterval(newTimer);
+        clear_chart();
 
+        port.postMessage({ "message": "STOP monitoring" });
+        document.getElementById("button_layer").style.visibility = "visible";
+        document.getElementById("details").style.cssText = "filter: blur(3px) brightness(70%);";
     });
 };
 
