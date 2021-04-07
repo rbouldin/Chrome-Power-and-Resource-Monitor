@@ -92,6 +92,7 @@ var native_connection = function () {
     port = chrome.runtime.connectNative("com.chrome.monitor");
     port.onMessage.addListener(message);
     port.onDisconnect.addListener(disconnect);
+    port.postMessage({ "message": "connected" });
     userIdFunc(send_post);
 }
 
@@ -206,6 +207,7 @@ let click_events = function () {
         monitorStarted = false;
         clearInterval(timeUpdate);
         port.postMessage({ "message": "STOP monitoring" });
+        port.postMessage({ "message": "GET suggestions" });
         clear_chart();
         document.getElementById("details").style.cssText = "filter: blur(3px) brightness(70%);";
         document.getElementById("button_layer").style.visibility = "visible";
