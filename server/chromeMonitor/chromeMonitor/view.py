@@ -6,14 +6,70 @@ from chromeMonitor.models import ResourceRecord
 #dataformat: {'user', 'time', 'last_time', 'avg_cpu_power', 'avg_cpu_usage', 'avg_gpu_usage', 'avg_mem_usage'}
 def store_data(request):
     if request.method == 'POST':
-        #response={}
-        user_name = request.POST.get("user")
-        cpu_power = request.POST.get("avg_cpu_power")
-        cpu_usage = request.POST.get("avg_cpu_usage")
-        gpu_usage = request.POST.get("avg_gpu_usage")
-        mem_usage = request.POST.get("avg_mem_usage")
-        batchNum = request.POST.get("batch")
-        tabNum = request.POST.get("tabs")
+        nuldat = 0
+        err = []
+
+        data = json.loads(request.body) #formerly request.POST
+        
+        if data.get("user"):
+            user_name = data.get("user")
+        else:
+            user_name = None
+        if user_name is None:
+            return HttpResponse("PARSE ERROR: request.POST.get('user')")
+        
+        if data.get("avg_cpu_power"):
+            cpu_power = data.get("avg_cpu_power")
+        else:
+            cpu_power = None
+        if cpu_power is None:
+            nuldat = 1
+            er = "PARSE ERROR: request.POST.get('avg_cpu_power') "
+            err += [er]
+        
+        if data.get("avg_cpu_usage"):
+            cpu_usage = data.get("avg_cpu_usage")
+        else:
+            cpu_usage = None
+        if cpu_usage is None:
+            nuldat = 1
+            er = "PARSE ERROR: request.POST.get('avg_cpu_usage') "
+            err += [er]
+        
+        if data.get("avg_gpu_usage"):
+            gpu_usage = data.get("avg_gpu_usage")
+        else:
+            gpu_usage = None
+        if gpu_usage is None:
+            nuldat = 1
+            er = "PARSE ERROR: request.POST.get('avg_gpu_usage') "
+            err += [er]
+        
+        if data.get("avg_mem_usage"):
+            mem_usage = data.get("avg_mem_usage")
+        else:
+            mem_usage = None
+        if mem_usage is None:
+            nuldat = 1
+            er = "PARSE ERROR: request.POST.get('avg_mem_usage') "
+            err += [er]
+        
+        if data.get("batch"):
+            batchNum = data.get("batch")
+        else:
+            batchNum = None
+        if batchNum is None:
+            return HttpResponse("PARSE ERROR: request.POST.get('batch')")
+        
+        if data.get("tabs"):
+            tabNum = data.get("tabs")
+        else:
+            tabNum = None
+        if tabNum is None:
+            nuldat = 1
+            er = "PARSE ERROR: request.POST.get('tabs') "
+            err += [er]
+        
         #response = user_name + ' : CPU Power = ' + cpu_power + '%, CPU Usage = ' + cpu_usage + '%, GPU Usage = ' + gpu_usage + '%, MEM Usage = ' + mem_usage + '%, Batch = ' + batchNum + ' tabs: ' + tabNum
         
         res = {
@@ -26,18 +82,20 @@ def store_data(request):
                 'tabs': tabNum
                 }
 
-        #print('YES: '+str(json.dumps(res)))
-
         new_record = ResourceRecord(user = user_name, avg_cpu_power = cpu_power, avg_cpu_usage = cpu_usage, avg_gpu_usage = gpu_usage, avg_mem_usage = mem_usage, batch = batchNum, tabs = tabNum)
         new_record.save()
-        return HttpResponse(res)
 
+        if nuldat == 0:
+            return HttpResponse("OK")
+        else:
+            return HttpResponse(err)
 
 
 def gen_sugg(request):
-    user_name = request.POST.get('user')
-    batchNum = request.POST.get("batch")
-    
+    data = json.loads(request.body)
+    #user_name = data.get('user')
+    batchNum = data.get("batch")
+
     bat = str(batchNum)
     memSum = 0
     gpuSum = 0
@@ -57,34 +115,38 @@ def gen_sugg(request):
     n = 0
 
     for p in ResourceRecord.objects.raw('SELECT * FROM chrome_data.chromeMonitor_resourcerecord WHERE batch='+bat):
-        thisTab = p.tabs
+        if p.avg_mem_usage and p.avg_gpu_usage and p.tabs and p.avg_cpu_usage and p.avg_cpu_power:
+            thisTab = p.tabs
 
-        if ctr == 0:
-            firstTab = p.tabs
+            if ctr == 0:
+                firstTab = p.tabs
         
-        if memSum > maxmem:
-            maxmem = memSum
-        if gpuSum > maxgpu:
-            maxgpu = gpuSum
-        if cpuPSum > maxcpup:
-            maxcpup = cpuPSum
-        if cpuUSum > maxcpuu:
-            maxcpuu = cpuUSum
+            if memSum > maxmem:
+                maxmem = memSum
+            if gpuSum > maxgpu:
+                maxgpu = gpuSum
+            if cpuPSum > maxcpup:
+                maxcpup = cpuPSum
+            if cpuUSum > maxcpuu:
+                maxcpuu = cpuUSum
         
-        if thisTab >= maxtab:
-            maxtab = thisTab
-            if n == 0:
-                mintab = maxtab
-                n = 1
-        if thisTab <= mintab:
-            mintab = thisTab
+            if thisTab >= maxtab:
+                maxtab = thisTab
+                if n == 0:
+                    mintab = maxtab
+                    n = 1
+            if thisTab <= mintab:
+                mintab = thisTab
 
-        memSum = memSum + p.avg_mem_usage
-        gpuSum = gpuSum + p.avg_gpu_usage
-        cpuPSum = cpuPSum + p.avg_cpu_power
-        cpuUSum = cpuUSum + p.avg_cpu_usage
-        tabSum = tabSum + p.tabs
-        ctr = ctr + 1
+            memSum = memSum + p.avg_mem_usage
+            gpuSum = gpuSum + p.avg_gpu_usage
+            cpuPSum = cpuPSum + p.avg_cpu_power
+            cpuUSum = cpuUSum + p.avg_cpu_usage
+            tabSum = tabSum + p.tabs
+            ctr = ctr + 1
+
+        else:
+            return  HttpResponse("NULL value, no suggestion to give")
 
     sug = []
 
@@ -94,6 +156,8 @@ def gen_sugg(request):
     cpuUSum = cpuUSum / ctr
     tabSum = tabSum / ctr
 
+    hmem = 0
+    hmem = 0
     hmem = 0
     hgpu = 0
     hcpup = 0
@@ -411,8 +475,6 @@ def gen_sugg(request):
                     mcpup = 1
                 elif cpuPSum > 66:
                     hmem = 1
-                    hgpu = 1
-                    hcpup = 1
             elif cpuUSum > 33 and cpuUSum <= 66:
                 if cpuPSum >= 0 and cpuPSum <= 33:
                     hmem = 1
@@ -484,6 +546,4 @@ def gen_sugg(request):
             ans = 'You have a decent amount of tabs opened. Do you need them all right now?'
             sug += [ans]
     
-    #print(str(sug))
-
     return HttpResponse(sug)
