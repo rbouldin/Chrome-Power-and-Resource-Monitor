@@ -9,7 +9,6 @@ README.md
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
@@ -25,3 +24,6 @@ README.md
 # java project file
 .classpath
 .project
+
+#log files
+LOG*.txt
