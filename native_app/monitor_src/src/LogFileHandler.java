@@ -1,8 +1,8 @@
 /** 
  *  LogFileHandler.java
  *
- *  VERSION: 2021.04.05
- *  AUTHORS: Rae Bouldin, Zinan Guo
+ *  VERSION: 2021.04.11
+ *  AUTHORS: Rae Bouldin
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
@@ -16,9 +16,11 @@ import java.util.Date;
 
 public class LogFileHandler {
 	
+	public final int DEFAULT = 0;
 	public final int ERROR = 1;
 	public final int NATIVE = 2;
 	public final int SERVER = 3;
+	public final int ALL = 4;
 	
 	private Date date;
 	private String sessionID;
@@ -104,6 +106,9 @@ public class LogFileHandler {
 			default:
 				break;
 		}
+		if (type == DEFAULT && fullLoggingIsOn) {
+			writeToLog(fullLog, message);
+		}
 	}
 	
 	public void logError(String message) {
@@ -137,7 +142,7 @@ public class LogFileHandler {
 		boolean successful = true;
 		Date endDate = Calendar.getInstance().getTime();
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/YYYY");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:KKa z");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mma z");
 		String closeMessage = String.format("Logging ended %s %s\n", dateFormat.format(endDate), timeFormat.format(endDate));
 		if (fullLoggingIsOn) {
 			writeToLog(fullLog, "");
@@ -168,7 +173,7 @@ public class LogFileHandler {
 	
 	private FileWriter startLog(String fileName, String logTitle) {
 		SimpleDateFormat fwDateFormat = new SimpleDateFormat("MM/dd/YYYY");
-        SimpleDateFormat fwTimeFormat = new SimpleDateFormat("hh:KKa z");
+        SimpleDateFormat fwTimeFormat = new SimpleDateFormat("hh:mma z");
 		String title = String.format(
 				" %s   (%s  %s)\n", 
 				logTitle, fwDateFormat.format(date), fwTimeFormat.format(date));

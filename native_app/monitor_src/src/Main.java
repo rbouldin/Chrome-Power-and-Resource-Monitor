@@ -1,7 +1,7 @@
 /** 
  *  Main.java
  *
- *  VERSION: 2021.04.06
+ *  VERSION: 2021.04.11
  *  AUTHORS: Rae Bouldin, Zinan Guo
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -24,6 +24,9 @@ public class Main {
 		// Parse which run options are enabled, if any.
 		RunOptions options = new RunOptions(args);
 		
+		// 
+		Monitor monitor = new Monitor();
+		
 		// Create a new MonitorLog for this monitoring session.
 		MonitorLog log = new MonitorLog();
 		
@@ -36,6 +39,20 @@ public class Main {
 		if (options.SERVER_LOGGING_ENABLED) { fileLogger.setServerLogging(true); }
 		fileLogger.startLogs();
 		
+		String nativeEnabled = String.valueOf(options.NATIVE_INPUT_ENABLED || options.NATIVE_OUTPUT_ENABLED).toUpperCase();
+		fileLogger.log(fileLogger.DEFAULT, " NATIVE MESSAGING   " + nativeEnabled);
+		if (!options.NATIVE_INPUT_ENABLED || !options.NATIVE_OUTPUT_ENABLED) {
+			fileLogger.log(fileLogger.DEFAULT, "  > native input    " + options.NATIVE_INPUT_ENABLED);
+			fileLogger.log(fileLogger.DEFAULT, "  > native output   " + options.NATIVE_OUTPUT_ENABLED);
+		}
+		String serverEnabled = String.valueOf(options.SERVER_MESSAGING_ENABLED).toUpperCase();
+		fileLogger.log(fileLogger.DEFAULT, " SERVER MESSAGING   " + serverEnabled);
+		if (!options.NATIVE_INPUT_ENABLED) {
+			fileLogger.log(fileLogger.DEFAULT, " RECORDS            " + options.NUM_RECORDS);
+		}
+		fileLogger.log(fileLogger.DEFAULT, "------------------------------------------------");
+		
+		
 		// If Native Message input is enabled, the program will accept messages related to 
 		// monitoring from Standard Input until the STOP_MONITORING message is read.
 		if (options.NATIVE_INPUT_ENABLED) {
@@ -47,6 +64,7 @@ public class Main {
 				fileLogger.logNativeMessage("Received: " + nativeMessage);
 			if (message == null || !message.equalsIgnoreCase("connected")) {
 				System.err.println("The first message received by Standard Input '" + nativeMessage + "' was unexpected.");
+				fileLogger.logError("The first message received by Standard Input '" + nativeMessage + "' was unexpected.");
 			}
 			
 			// The next message received from Standard Input should contain information on the user.
@@ -56,22 +74,23 @@ public class Main {
 				fileLogger.logNativeMessage("Received: " + nativeMessage);
 			if (message == null || !POST_USER_DATA.equalsIgnoreCase(message)) {
 				System.err.println("The second message received by Standard Input '" + nativeMessage + "' was unexpected.");
+				fileLogger.logError("The second message received by Standard Input '" + nativeMessage + "' was unexpected.");
 			} else {
 				// Populate the MonitorLog with the user info read from Standard Input.
 				String userID = NativeMessage.getJSONValue(nativeMessage, "user_id");
 				if ( !log.setUserID(userID) ) {
 					System.err.println("Something went wrong setting the MonitorLog user_ID field.");
-					fileLogger.logNativeMessage("Something went wrong setting the MonitorLog user_ID field.");
+					fileLogger.logError("Something went wrong setting the MonitorLog user_ID field.");
 				}
 				String suggestions = NativeMessage.getJSONValue(nativeMessage, "suggestions");
 				if ( !log.setSuggestions(suggestions) ) {
 					System.err.println("Something went wrong setting the MonitorLog settings field.");
-					fileLogger.logNativeMessage("Something went wrong setting the MonitorLog suggestions field.");
+					fileLogger.logError("Something went wrong setting the MonitorLog suggestions field.");
 				}
 				String tabs = NativeMessage.getJSONValue(nativeMessage, "tabs");
 				if ( !log.setNumTabs(tabs) ) {
 					System.err.println("Something went wrong setting the MonitorLog tabs field.");
-					fileLogger.logNativeMessage("Something went wrong setting the MonitorLog tabs field.");
+					fileLogger.logError("Something went wrong setting the MonitorLog tabs field.");
 				}
 			}
 			
@@ -85,15 +104,9 @@ public class Main {
 				
 				// Parse nativeMessage for the actual content sent.
 				if ( GET_MONITOR_DATA.equalsIgnoreCase(message) ) {
-					// Update power and resource monitoring files.
-					Monitor.updateData();
-					TimeUnit.SECONDS.sleep(2);
-					// Create new MonitorRecord object and convert it to JSON.
-					MonitorRecord newRecord = 
-							new MonitorRecord( Monitor.getPowerSensorValue("CPU Package"),
-											   Monitor.getCPUTotal(),
-											   Monitor.getMemoryTotal(), 
-											   Monitor.getGPUMemory());
+					// Get data from the Monitor as a new MonitorRecord object 
+					// and convert the record to JSON format.
+					MonitorRecord newRecord = monitor.getData();
 					String recordAsJSON = newRecord.toJSON();
 					// Append record data to log file.
 					log.appendRecord(newRecord, recordAsJSON);
@@ -114,15 +127,9 @@ public class Main {
 			
 			int remainingRecords = options.NUM_RECORDS;
 			while (remainingRecords > 0) {
-				// Update power and resource monitoring files.
-				Monitor.updateData();
-				TimeUnit.SECONDS.sleep(2);
-				// Create new MonitorRecord object and convert it to JSON.
-				MonitorRecord newRecord = 
-						new MonitorRecord( Monitor.getPowerSensorValue("CPU Package"),
-										   Monitor.getCPUTotal(),
-										   Monitor.getMemoryTotal(), 
-										   Monitor.getGPUMemory());
+				// Get data from the Monitor as a new MonitorRecord object 
+				// and convert the record to JSON format.
+				MonitorRecord newRecord = monitor.getData();
 				String recordAsJSON = newRecord.toJSON();
 				// Append record data to log file.
 				log.appendRecord(newRecord, recordAsJSON);
@@ -166,6 +173,10 @@ public class Main {
 			
 		}
 		
+		System.out.println();
+		System.out.println("LOG");
+		System.out.println(log.toJSON());
+		
 		// Send suggestions through Native Messaging
 		if (options.NATIVE_INPUT_ENABLED) {
 			String nativeMessage = NativeMessage.read(System.in);
@@ -173,6 +184,7 @@ public class Main {
 				fileLogger.logNativeMessage("Received: " + nativeMessage);
 			if (message == null || !GET_SUGGESTIONS.equalsIgnoreCase(message)) {
 				System.err.println("The message received by Standard Input '" + nativeMessage + "' was unexpected.");
+				fileLogger.logError("The message received by Standard Input '" + nativeMessage + "' was unexpected.");
 			} 
 			else if (options.NATIVE_OUTPUT_ENABLED) {
 				NativeMessage.send(suggestions);
@@ -187,7 +199,7 @@ public class Main {
 		// Sleep before attempting to delete or close any files, to give the 
 		// last run enough time to finish executing.
 		TimeUnit.SECONDS.sleep(5);
-		Monitor.deleteOutputFiles();
+//		Monitor.deleteOutputFiles();
 		fileLogger.closeLogs();
 
 	}

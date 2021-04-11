@@ -1,7 +1,7 @@
 /** 
  *  RunOptions.java
  *
- *  VERSION: 2021.04.05
+ *  VERSION: 2021.04.11
  *  AUTHORS: Rae Bouldin
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -133,10 +133,7 @@ public class RunOptions {
             else if (args[i].equals("-logServer")) {
             	SERVER_LOGGING_ENABLED = true;
             }
-            else if (args[i].equals("-clean")) {
-                Monitor.deleteOutputFiles();
-                System.exit(0);
-			} else {
+            else {
 				System.err.println("Unknown parameter at \"" + args[i] + "\".");
 			}
 		}

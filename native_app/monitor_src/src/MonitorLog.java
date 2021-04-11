@@ -1,7 +1,7 @@
 /** 
  *  MonitorLog.java
  *
- *  VERSION: 2021.04.06
+ *  VERSION: 2021.04.11
  *  AUTHORS: Rae Bouldin
  *
  *  DESCRIPTION:
@@ -230,10 +230,10 @@ public class MonitorLog {
 	private double averageCpuPower() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (monitorRecords.get(i).cpu_power.isEmpty()) {
+			if (!Double.isNaN(monitorRecords.get(i).getChromeCpuPower())) {
 				return Double.NaN;
 			}
-			sum += Double.parseDouble(monitorRecords.get(i).cpu_power);
+			sum += monitorRecords.get(i).getChromeCpuPower();
 		}
 		return (sum / monitorRecords.size());
 	}
@@ -249,10 +249,10 @@ public class MonitorLog {
 	private double averageCpuUsage() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (monitorRecords.get(i).cpu_usage.isEmpty()) {
+			if (!Double.isNaN(monitorRecords.get(i).getChromeCpuUsage())) {
 				return Double.NaN;
 			}
-			sum += Double.parseDouble(monitorRecords.get(i).cpu_usage);
+			sum += monitorRecords.get(i).getChromeCpuUsage();
 		}
 		return (sum / monitorRecords.size());
 	}
@@ -268,10 +268,10 @@ public class MonitorLog {
 	private double averageGpuUsage() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (monitorRecords.get(i).gpu_usage.isEmpty()) {
+			if (!Double.isNaN(monitorRecords.get(i).getChromeGpuUsage())) {
 				return Double.NaN;
 			}
-			sum += Double.parseDouble(monitorRecords.get(i).gpu_usage);
+			sum += monitorRecords.get(i).getChromeGpuUsage();
 		}
 		return (sum / monitorRecords.size());
 	}
@@ -287,10 +287,10 @@ public class MonitorLog {
 	private double averageMemUsage() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (monitorRecords.get(i).mem_usage.isEmpty()) {
+			if (!Double.isNaN(monitorRecords.get(i).getChromeMemUsage())) {
 				return Double.NaN;
 			}
-			sum += Double.parseDouble(monitorRecords.get(i).mem_usage);
+			sum += monitorRecords.get(i).getChromeMemUsage();
 		}
 		return (sum / monitorRecords.size());
 	}

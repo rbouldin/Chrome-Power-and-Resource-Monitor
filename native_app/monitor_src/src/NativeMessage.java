@@ -49,14 +49,53 @@ public class NativeMessage {
 	
 	
 	public static String getJSONValue(String jsonString, String id) {
-		String[] json = jsonString.split("\"");
-		for (int i = 0; i < json.length; i++) {
-			if (json[i].equalsIgnoreCase(id) 
-					&& i+2 < json.length && json[i+1].equals(":")) {
-				return json[i+2];
+		
+		// Check for invalid input
+		if (jsonString == null || id == null) {
+			return null;
+		}
+		if (jsonString.charAt(0) != '{' || jsonString.charAt(jsonString.length()-1) != '}') {
+			System.err.println(
+					"The jsonString input into getJSONValue was not a JSON formatted String.");
+			return null;
+		}
+		
+		// Format ID to be surrounded in quotes
+		String jsonID = "\"" + id + "\"";
+		
+		// Get the index of the ID from the JSON String, if it exists.
+		int beginIndex = jsonString.indexOf(jsonID, 0);
+		if (beginIndex > 0) {
+			// Trim the jsonString so that it starts at the element with the 
+			// specified jsonID.
+			String offsetStr = jsonString.substring(beginIndex);
+			// Find the end of the element with the specified jsonID
+			int offset = offsetStr.indexOf(",\"");
+			if (offset < 0) { offset = offsetStr.indexOf("}"); }
+			if (offset > 0) {
+				int endIndex = beginIndex + offset;
+				// Extract the full JSON element from the jsonString.
+				String elementString = jsonString.substring(beginIndex, endIndex);
+				// Split the element into its "key":value pair
+				String[] elementSplit = elementString.split(":");
+				// something went wrong if the elementSplit size isn't 2
+				if (elementSplit.length == 2) {
+					String value = elementSplit[1];
+					// Remove extraneous quotes if the value was a String
+					if (value.charAt(0) == '\"') {
+						value = value.substring(1);
+					}
+					if (value.charAt(value.length()-1) == '\"') {
+						value = value.substring(0, value.length()-1);
+					}
+					// Return the value
+					return value;
+				}
 			}
 		}
+		
 		return null;
+		
 	}
 
 	
