@@ -104,6 +104,16 @@ public class Monitor {
 					chromeGpuUsage = 100d * (float) sensors.getValue(SensorProperty.Value, i) / totalIntegratedGpu;
 				}
 			}
+			else if (sensors.getValue(SensorProperty.SensorType, i).equals("Load")) {
+				// CPU Total Load
+				if (sensors.getValue(SensorProperty.Name, i).equals("CPU Total")) {
+					systemCpuUsage = (float) sensors.getValue(SensorProperty.Value, i);
+				}
+				// Memory Load
+				else if (sensors.getValue(SensorProperty.Name, i).equals("Memory")) {
+					systemMemUsage = (float) sensors.getValue(SensorProperty.Value, i);
+				}
+			}
 			
 		}
 		
