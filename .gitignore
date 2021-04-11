@@ -24,6 +24,7 @@ README.md
 # java project file
 .classpath
 .project
+.settings
 
 #log files
 LOG*.txt
