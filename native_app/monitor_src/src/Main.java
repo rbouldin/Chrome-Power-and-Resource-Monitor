@@ -173,10 +173,6 @@ public class Main {
 			
 		}
 		
-		System.out.println();
-		System.out.println("LOG");
-		System.out.println(log.toJSON());
-		
 		// Send suggestions through Native Messaging
 		if (options.NATIVE_INPUT_ENABLED) {
 			String nativeMessage = NativeMessage.read(System.in);
