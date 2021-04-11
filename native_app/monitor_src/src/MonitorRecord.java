@@ -177,11 +177,14 @@ public class MonitorRecord {
 	
 	private String getJSONValue(double value) {
 		
-		String jsonVal = "\"\"";
+		StringBuilder jsonBuilder = new StringBuilder();
+		jsonBuilder.append("\"");
 		if ( !Double.isNaN(value) ) {
-			jsonVal = String.format("%.4f", value);
+			String jsonVal = String.format("%.4f", value);
+			jsonBuilder.append(jsonVal);
 		}
-		return jsonVal;
+		jsonBuilder.append("\"");
+		return jsonBuilder.toString();
 		
 	}
 	
