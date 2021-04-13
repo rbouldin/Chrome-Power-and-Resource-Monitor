@@ -12,7 +12,7 @@ var monitorStarted = false;
 var monitorStartTime;
 var timeUpdate
 
-var padNum = function (num){
+var padNum = function (num) {
     if (num < 10) {
         return "0" + num.toString();
     }
@@ -27,7 +27,7 @@ var formatTime = function (TimeDiff) {
     var min = parseInt(afterHour / (60 * 1000));
     var afterMin = TimeDiff - hour * 60 * 60 * 1000 - min * 60 * 1000;
     var second = parseInt(afterMin / 1000)
-    var output = padNum(hour) + ':' +  padNum(min) + ':' +  padNum(second) + 's';
+    var output = padNum(hour) + ':' + padNum(min) + ':' + padNum(second) + 's';
     return output;
 }
 
@@ -50,14 +50,14 @@ function getRandomToken() {
     return hex;
 }
 
-function userIdFunc(var_func){
-    chrome.storage.sync.get('userid', function(items) {
+function userIdFunc(var_func) {
+    chrome.storage.sync.get('userid', function (items) {
         var userid = items.userid;
         if (userid) {
             var_func(userid);
         } else {
             userid = getRandomToken();
-            chrome.storage.sync.set({userid: userid}, function() {
+            chrome.storage.sync.set({ userid: userid }, function () {
                 var_func(userid);
             });
         }
@@ -67,15 +67,27 @@ function userIdFunc(var_func){
 //native message
 //============================
 var port;
+var cpu_package;
+var calculate_power = function (cpu_percentage) {
+    console.log("cpu_package", cpu_package);
+    console.log("cpu_percentage", cpu_percentage);
+    return (cpu_percentage * cpu_package) / (cpu_percentage * 0.412 + 0.246);
+}
+
 var message = function (msg) {
     if (monitorStarted) {
-        let cpu_data = parseFloat(msg.cpu_usage);
-        let gpu_data = parseFloat(msg.gpu_usage);
-        let mem_data = parseFloat(msg.mem_usage);
-        document.getElementById("cpu_info").innerText = "CPU: " + cpu_data.toFixed(2) + "%";
-        document.getElementById("gpu_info").innerText = "GPU: " + gpu_data.toFixed(2) + "%";
-        document.getElementById("mem_info").innerText = "MEM: " + mem_data.toFixed(2) + "%";
-        updateData(cpu_data, gpu_data, mem_data)
+        if (!Number.isNaN(parseFloat(msg.max_cpu_power))) {
+            cpu_package = parseFloat(msg.max_cpu_power)
+        } else {
+            let cpu_data = parseFloat(msg.cpu_usage);
+            let gpu_data = parseFloat(msg.gpu_usage);
+            let mem_data = parseFloat(msg.mem_usage);
+            document.getElementById("cpu_info").innerText = "CPU: " + cpu_data.toFixed(2) + "%";
+            document.getElementById("gpu_info").innerText = "GPU: " + gpu_data.toFixed(2) + "%";
+            document.getElementById("mem_info").innerText = "MEM: " + mem_data.toFixed(2) + "%";
+            document.getElementById("curr_power").innerText = "Current power usage: " + calculate_power(cpu_data / 100).toFixed(2) + " W";
+            updateData(cpu_data, gpu_data, mem_data)
+        }
     }
 }
 
@@ -83,9 +95,10 @@ var disconnect = function () {
     //console.warn("Disconnected");
 }
 
-var send_post = function(user_id) {
-    console.log("user id: ", user_id);
+var send_post = function (user_id) {
+    //console.log("user id: ", user_id);
     port.postMessage({ "message": "POST user", "user_id": "" + user_id, "suggestions": [], "tabs": "" + bg.count });
+    port.postMessage({ "message": "GET sysInfo" });
 }
 
 var native_connection = function () {
@@ -164,7 +177,7 @@ let updateData = function (cpu_num, gpu_num, mem_num) {
     //if cpu_num != 
     chart_index++;
     data.addRow([chart_index, cpu_num, gpu_num, mem_num]);
-    if (chart_index > 10){
+    if (chart_index > 10) {
         options.hAxis.viewWindow.max = chart_index;
         options.hAxis.viewWindow.min = chart_index - 10;
     }
