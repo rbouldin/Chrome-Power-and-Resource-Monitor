@@ -1,17 +1,17 @@
 //tab count module
 //============================
 var bg = chrome.extension.getBackgroundPage();
+var dataPort = chrome.runtime.connect({ name: "nativeDataQuery" });
 
-update_tabCount = function () {
+var updateTabCount = function () {
     document.getElementById("tab_counter").innerText = "Number of tabs opened:" + bg.count;
 }
 
-//timer to update the time count
-//============================
-var monitorStarted = false;
+//time count
+//=================================
 var monitorStartTime;
-var timeUpdate
 
+//Time formatter -------------------
 var padNum = function (num) {
     if (num < 10) {
         return "0" + num.toString();
@@ -31,104 +31,31 @@ var formatTime = function (TimeDiff) {
     return output;
 }
 
-var newTimer = function () {
+//Timer -------------------
+var timer;
+var dataTimer = function () {
     var currTime = new Date();
     var timeElapsed = currTime.getTime() - monitorStartTime.getTime();
     document.getElementById("monitor_timer").innerText = formatTime(timeElapsed);
-    port.postMessage({ "message": "GET MonitorRecord" });
+    dataPort.postMessage({ type: "dataUpdate" });
 }
 
-//unique user id
-//============================
-function getRandomToken() {
-    var randomPool = new Uint8Array(16);
-    crypto.getRandomValues(randomPool);
-    var hex = '';
-    for (var i = 0; i < randomPool.length; ++i) {
-        hex += randomPool[i].toString(8);
-    }
-    return hex;
-}
-
-function userIdFunc(var_func) {
-    chrome.storage.sync.get('userid', function (items) {
-        var userid = items.userid;
-        if (userid) {
-            var_func(userid);
-        } else {
-            userid = getRandomToken();
-            chrome.storage.sync.set({ userid: userid }, function () {
-                var_func(userid);
-            });
-        }
-    });
-}
-
-//native message
-//============================
-var port;
-var cpu_package;
-var calculate_power = function (cpu_percentage) {
-    console.log("cpu_package", cpu_package);
-    console.log("cpu_percentage", cpu_percentage);
-    return (cpu_percentage * cpu_package) / (cpu_percentage * 0.412 + 0.246);
-}
-
-var message = function (msg) {
-    if (monitorStarted) {
-        if (!Number.isNaN(parseFloat(msg.max_cpu_power))) {
-            cpu_package = parseFloat(msg.max_cpu_power)
-        } else {
-            let cpu_data = parseFloat(msg.cpu_usage);
-            let gpu_data = parseFloat(msg.gpu_usage);
-            let mem_data = parseFloat(msg.mem_usage);
-            document.getElementById("cpu_info").innerText = "CPU: " + cpu_data.toFixed(2) + "%";
-            document.getElementById("gpu_info").innerText = "GPU: " + gpu_data.toFixed(2) + "%";
-            document.getElementById("mem_info").innerText = "MEM: " + mem_data.toFixed(2) + "%";
-            document.getElementById("curr_power").innerText = "Current power usage: " + calculate_power(cpu_data / 100).toFixed(2) + " W";
-            updateData(cpu_data, gpu_data, mem_data)
-        }
-    }
-}
-
-var disconnect = function () {
-    //console.warn("Disconnected");
-}
-
-var send_post = function (user_id) {
-    //console.log("user id: ", user_id);
-    port.postMessage({ "message": "POST user", "user_id": "" + user_id, "suggestions": [], "tabs": "" + bg.count });
-    port.postMessage({ "message": "GET sysInfo" });
-}
-
-var native_connection = function () {
-    port = chrome.runtime.connectNative("com.chrome.monitor");
-    port.onMessage.addListener(message);
-    port.onDisconnect.addListener(disconnect);
-    port.postMessage({ "message": "connected" });
-    userIdFunc(send_post);
-}
-
-//chart
+//data chart
+//===========================
 var data;
 var chart;
 var option;
-var chart_element;
-google.charts.load('current', { 'packages': ['corechart'] }).then(function () {
-    //google.charts.setOnLoadCallback(drawChart);
+var chartElement;
 
+google.charts.load('current', { 'packages': ['corechart'] }).then(function () {
     data = new google.visualization.DataTable();
     data.addColumn('number', 'Time(Second)');
     data.addColumn('number', 'CPU usage');
     data.addColumn('number', 'GPU usage');
     data.addColumn('number', 'MEM usage');
-
     data.addRow([0, 0, 0, 0]);
 
     options = {
-        chart: {
-            //title: 'Power monitoring data',
-        },
         width: 420,
         height: 170,
         chartArea: { width: '100%', height: '100%' },
@@ -161,43 +88,36 @@ google.charts.load('current', { 'packages': ['corechart'] }).then(function () {
         legend: {
             textStyle: { color: '#FFF', fontSize: 10 }
         },
-
     };
 
-    let drawChart = function () {
-        chart_element = document.getElementById('power_chart');
-        chart = new google.visualization.LineChart(chart_element);
+    var drawChart = function () {
+        chartElement = document.getElementById('power_chart');
+        chart = new google.visualization.LineChart(chartElement);
         chart.draw(data, options);
     }
     google.charts.setOnLoadCallback(drawChart);
 })
 
-var chart_index = 0;
-let updateData = function (cpu_num, gpu_num, mem_num) {
-    //if cpu_num != 
-    chart_index++;
-    data.addRow([chart_index, cpu_num, gpu_num, mem_num]);
-    if (chart_index > 10) {
-        options.hAxis.viewWindow.max = chart_index;
-        options.hAxis.viewWindow.min = chart_index - 10;
+var chartIndex = 0;
+var maxDataPoints = 10
+var updateData = function (cpuNum, gpuNum, memNum) {
+    chartIndex++;
+    data.addRow([chartIndex, cpuNum, gpuNum, memNum]);
+    if (chartIndex > maxDataPoints) {
+        options.hAxis.viewWindow.max = chartIndex;
+        options.hAxis.viewWindow.min = chartIndex - maxDataPoints;
     }
     chart.draw(data, options);
 }
 
-chrome.runtime.onMessage.addListener(
-    function (request, sender, sendResponse) {
-        if (request.msg == "tab_count_update")
-            update_tabCount();
-    });
-
-let clear_chart = function () {
+var clearChart = function () {
     data = new google.visualization.DataTable();
     data.addColumn('number', 'Time(Second)');
     data.addColumn('number', 'CPU usage');
     data.addColumn('number', 'GPU usage');
     data.addColumn('number', 'MEM usage');
     data.addRow([0, 0, 0, 0]);
-    chart_index = 0;
+    chartIndex = 0;
     chart.draw(data, options);
 
     document.getElementById("cpu_info").innerText = "CPU: 00.00%";
@@ -205,29 +125,88 @@ let clear_chart = function () {
     document.getElementById("mem_info").innerText = "MEM: 00.00%";
 }
 
-//click functions
+//native message
 //============================
+var monitorStarted = false;
+var lastQuery = new Date();
+var cpuPackage;
+var totalPower;
+var calculate_power = function (cpuPercentage) {
+    return (cpuPercentage * cpuPackage) / (cpuPercentage * 0.412 + 0.246);
+}
+
+var receiveData = function(cpu, gpu, mem){
+    if (!monitorStarted){
+        return;
+    }
+
+    document.getElementById("cpu_info").innerText = "CPU: " + cpu.toFixed(2) + "%";
+    document.getElementById("mem_info").innerText = "MEM: " + mem.toFixed(2) + "%";
+    if (gpu != null){
+        //in case open hardware monitor is not opened
+        document.getElementById("gpu_info").innerText = "GPU: " + gpu.toFixed(2) + "%";
+    }
+
+    var currTime = new Date();
+    //time elapse in hour
+    var timeElapsed = (currTime.getTime() - lastQuery.getTime()) / (3600 * 1000);
+    var currPower = calculate_power(cpu / 100);
+    totalPower += currPower * timeElapsed;
+
+    var powerDisplay = document.getElementById("curr_power").childNodes[0];
+    powerDisplay.nodeValue = "Current power usage: " + currPower.toFixed(2) + " W";
+    document.getElementById("total_power").innerText = "Total power usage: " + totalPower.toFixed(2) + " Wh"
+    updateData(cpu, gpu, mem);
+    lastQuery = new Date();
+}
+
+var newSession = function(){
+    monitorStarted = true;
+
+    totalPower = 0;
+    lastQuery = new Date();
+    monitorStartTime = new Date();
+    
+    dataPort.postMessage({type: "startMonitor"});
+    timer = setInterval(dataTimer, 1000);
+    document.getElementById("button_layer").style.visibility = "hidden";
+    document.getElementById("details").style.cssText = "filter: blur(0px);";
+}
+
+var endSession = function(){   
+    clearInterval(timer);
+    monitorStarted = false;
+    
+    dataPort.postMessage({type: "stopMonitor"}); 
+    clearChart();
+
+    document.getElementById("details").style.cssText = "filter: blur(3px) brightness(70%);";
+    document.getElementById("button_layer").style.visibility = "visible";
+}
+
+
+//binding events
+//=============================
+dataPort.onMessage.addListener(function(msg) {
+    if (msg.type == "tabCountUpdate"){
+        updateTabCount();
+    } else if (msg.type == "maxCpuPower"){
+        cpuPackage = msg.power;
+    } else if (msg.type == "newData"){
+        receiveData(msg.cpu, msg.gpu, msg.mem);
+    }
+})
+
 let click_events = function () {
     document.getElementById("start_monitor").addEventListener("click", function () {
-        monitorStarted = true;
-        native_connection();
-        monitorStartTime = new Date();
-        timeUpdate = setInterval(newTimer, 1000);
-        document.getElementById("button_layer").style.visibility = "hidden";
-        document.getElementById("details").style.cssText = "filter: blur(0px);";
+        newSession();
     });
     document.getElementById("stop_monitor").addEventListener("click", function () {
-        monitorStarted = false;
-        clearInterval(timeUpdate);
-        port.postMessage({ "message": "STOP monitoring" });
-        port.postMessage({ "message": "GET suggestions" });
-        clear_chart();
-        document.getElementById("details").style.cssText = "filter: blur(3px) brightness(70%);";
-        document.getElementById("button_layer").style.visibility = "visible";
+        endSession();
     });
 };
 
 document.addEventListener("DOMContentLoaded", function () {
     click_events();
-    update_tabCount();
+    updateTabCount();
 });
