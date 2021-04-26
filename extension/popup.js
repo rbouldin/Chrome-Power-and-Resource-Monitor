@@ -1,10 +1,16 @@
-//tab count module
+//header info module
 //============================
+//tab count---------------
 var bg = chrome.extension.getBackgroundPage();
 var dataPort = chrome.runtime.connect({ name: "nativeDataQuery" });
 
 var updateTabCount = function () {
     document.getElementById("tab_counter").innerText = "Number of tabs opened:" + bg.count;
+}
+
+//carbon footprint---------------
+var updateCarbonFootprint = function () {
+    document.getElementById("carbon_counter").innerText = "Total Carbon footprint by chrome: " + bg.totalCO2.toFixed(2) + " Gram of CO2";
 }
 
 //time count
@@ -177,9 +183,13 @@ var endSession = function(){
     clearInterval(timer);
     monitorStarted = false;
     
-    dataPort.postMessage({type: "stopMonitor"}); 
+    dataPort.postMessage({type: "stopMonitor"});
+    var currTime = new Date();
+    var timeElapsed = (currTime.getTime() - monitorStartTime.getTime()) / (3600 * 1000);
+    var avgPower = totalPower / timeElapsed;
+    dataPort.postMessage({type: "avgPower", power: avgPower});
+    
     clearChart();
-
     document.getElementById("details").style.cssText = "filter: blur(3px) brightness(70%);";
     document.getElementById("button_layer").style.visibility = "visible";
 }
@@ -190,7 +200,10 @@ var endSession = function(){
 dataPort.onMessage.addListener(function(msg) {
     if (msg.type == "tabCountUpdate"){
         updateTabCount();
-    } else if (msg.type == "maxCpuPower"){
+    }else if (msg.type == "carbonUpdate"){
+        updateCarbonFootprint();
+    }
+    else if (msg.type == "maxCpuPower"){
         cpuPackage = msg.power;
     } else if (msg.type == "newData"){
         receiveData(msg.cpu, msg.gpu, msg.mem);
@@ -209,4 +222,5 @@ let click_events = function () {
 document.addEventListener("DOMContentLoaded", function () {
     click_events();
     updateTabCount();
+    updateCarbonFootprint();
 });

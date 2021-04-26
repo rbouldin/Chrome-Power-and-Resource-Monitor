@@ -1,4 +1,6 @@
 var count = 0;
+var totalCO2 = 0;
+var avgPower = 5;
 
 //native data query
 //=======================================================
@@ -90,10 +92,13 @@ chrome.runtime.onConnect.addListener(function(dataPort) {
                 stopMonitor();
             } else if (msg.type == "dataUpdate"){
                 updateData();
+            } else if (msg.type == "avgPower"){
+                avgPower = msg.power;
+                console.log("avgPowerUpdate", avgPower);
+                chrome.storage.sync.set({ avgPower: avgPower });
             }
         });
         popupPort.onDisconnect.addListener(function() {
-            console.log("popup has been closed");
             popupConnected = false;
             if (nativeConnected){
                 stopMonitor();
@@ -122,3 +127,39 @@ chrome.tabs.onRemoved.addListener(function () {
         popupPort.postMessage({type: "tabCountUpdate"});
     }
 })
+
+//Carbon footprint calculator
+//============================================
+//retrieve stored data -----------------------
+chrome.storage.sync.get('avgPower', function (items) {
+    var lastAvgPower = items.avgPower;
+    if (lastAvgPower) {
+        avgPower = lastAvgPower;
+    } else {
+        chrome.storage.sync.set({ avgPower: 5 });
+    }
+});
+
+chrome.storage.sync.get('totalCO2', function (items) {
+    var lastCO2 = items.totalCO2;
+    if (lastCO2) {
+        totalCO2 = lastCO2;
+    } else {
+        chrome.storage.sync.set({ totalCO2: 0 });
+    }
+});
+
+//timer to count the CO2 ---------------------
+var carbonTimer;
+var timeInterval = 5;
+
+var carbonCounter = function(){
+    totalCO2 += (timeInterval / 3600) * avgPower * 0.4173;
+    chrome.storage.sync.set({ totalCO2: totalCO2 });
+    if (popupConnected){
+        popupPort.postMessage({type: "carbonUpdate"});
+    }
+}
+
+carbonTimer = setInterval(carbonCounter, timeInterval * 1000);
+
