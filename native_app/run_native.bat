@@ -20,7 +20,5 @@
 ::   -logServer              Ouput the messages sent back and forth in server messaging to a 
 ::                           file named LOG-<SessionID>-Server.txt
 ::
-::   -clean                  Deletes any output files created by previous runs then exits.
-::
 @echo off
-java -jar "monitor.jar" -server off -logNative %*
+java -jar "monitor.jar" -server on -log %*
