@@ -6,8 +6,12 @@ body {
 }
 
 header {
-    height: 25px;
+    height: 50px;
     margin: 0;
+}
+
+#carbon_counter {
+    margin: 0px;
 }
 
 main {
@@ -34,8 +38,10 @@ main {
 #button_layer {
     position:absolute;
     z-index:20;
-    top: 50%;
+    top: 45%;
     left: 50%;
+
+    width: 350px;
     -ms-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
@@ -91,18 +97,31 @@ h2 {
 }
 
 #stop_monitor {
+    padding: 0px;
     font-size: 14px;
     height: 25px;
-    width: 120px;
+    width: 50px;
+    outline: none;
+}
+
+#pause_monitor {
+    padding: 0px;
+    font-size: 14px;
+    height: 25px;
+    width: 70px;
     outline: none;
 }
 
 #start_monitor {
-    /* font-size : 20px; */
-    /* height: 50px;
-    width: 100px; */
-    justify-content: center;
-    align-items: center;
+    position: static;
+    width: 190px;
+    left: calc(50% - 95px);
+    margin-bottom: 8px;
+}
+
+.monitor-options {
+    position: static;
+    color: white
 }
 
 #monitor_timer{
@@ -113,3 +132,64 @@ h2 {
     color: white;
 }
 
+
+.help_icon {
+    position: absolute;
+    top: 3px;
+
+    background: url('lib/outline_help_white_18dp.png');
+    background-size: 15px;
+    height: 15px;
+    width: 15px;
+    display: block;
+    /* Other styles here */
+}
+
+/*tooltip*/
+/* Tooltip container */
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+  
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 300px;
+    background-color: #555;
+    text-align: left;
+    font-size: 11px;
+    color: #fff;
+
+    padding: 5px;
+    border-radius: 6px;
+
+    /* Position the tooltip text */
+    position: absolute;
+    z-index: 1;
+    top: 150%;
+    left: 50%;
+    margin-left: -150px;
+
+    /* Fade in tooltip */
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+/* Tooltip arrow */
+.tooltip .tooltiptext::after {
+    content: " ";
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color:  transparent transparent #555 transparent;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+    opacity: 1;
+}

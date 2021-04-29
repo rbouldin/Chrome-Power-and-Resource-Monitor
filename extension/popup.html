@@ -5,6 +5,7 @@
   <!-- libraries -->
   <link rel="stylesheet" href="lib/simple_btn.css">
   <link rel="stylesheet" href="lib/bordered_btn.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <!-- dedicated js and css -->
   <link rel="stylesheet" href="popup.css">
@@ -15,6 +16,7 @@
   <header>
     <div class="header">
       <h2 id="tab_counter">Number of tabs opened:</h2>
+      <h3 id="carbon_counter">Total Carbon footprint by chrome:</h3>
     </div>
   </header>
 
@@ -22,12 +24,29 @@
     <div id="details">
       <div class="row">
         <div class="double-column">
-          <h4 class="detail_info power_info" id="curr_power">Current power usage: N/A W</h4>
-          <h4 class="detail_info power_info" id="total_power">Total power usage: N/A Wh</h4>
+             <h4 class="detail_info power_info" id="curr_power">Current power usage: N/A W
+              <i class='help_icon tooltip'>
+                <span class="tooltiptext tooltip-bottom"> 
+                  How do we calculate the power usage? <br>
+                  We estimate the power usage of the chrome (P) based on two data from your computer, 
+                  the maximum cpu power (C) and the current cpu usage (X).
+                  Then we use this formula to estimate power usage: 
+                  <br>
+                  P = (X * C) / (0.412 X + 0.246) 
+                  <br> 
+                  This numbers in the formula is derived from the average power consumption percentage of the cpu
+                  within an idle system and a fully loaded system. Data comes from the article
+                  "Power Consumption Breakdown on a Modern Laptop" by Aqeel Mahesri, and V. Vardhan (2005).
+                </span>
+              </i>
+            </h4>
+            <h4 class="detail_info power_info" id="total_power">Total power usage: N/A Wh</h4>
+            
         </div>
         <div class="column">
           <div class="right_column">
-            <button id="stop_monitor" class="bttn-bordered bttn-md">stop monitor</button>
+            <button id="pause_monitor" class="bttn-bordered bttn-md">Pause</button>
+            <button id="stop_monitor" class="bttn-bordered bttn-md">Stop</button>
           </div>
           <h4 id="monitor_timer">00:00:00s</h4>
         </div>
@@ -42,6 +61,16 @@
     </div>
     <div id="button_layer">
       <button class="bttn-simple bttn-lg bttn-default" id="start_monitor">start monitor</button>
+      <br>
+      <label class="monitor-options">
+        <input type="checkbox" checked="checked">
+        Send the data to the server for usage suggestion
+      </label>
+      <br>
+      <label class="monitor-options">
+        <input type="checkbox">
+        Generate a log for this monitor session
+      </label>
     </div>
   </main>
 
