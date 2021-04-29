@@ -1,7 +1,7 @@
 /** 
  *  LogFileHandler.java
  *
- *  VERSION: 2021.04.11
+ *  VERSION: 2021.04.29
  *  AUTHORS: Rae Bouldin
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -122,7 +122,7 @@ public class LogFileHandler {
 	
 	public void logNativeMessage(String message) {
 		if (fullLoggingIsOn) { 
-			writeToLog(fullLog, "NATIVE " + message); 
+			writeToLog(fullLog, " NATIVE " + message); 
 		}
 		if (nativeLoggingIsOn) { 
 			writeToLog(nativeLog, message); 
@@ -131,7 +131,7 @@ public class LogFileHandler {
 	
 	public void logServerMessage(String message) {
 		if (fullLoggingIsOn) { 
-			writeToLog(fullLog, "SERVER " + message); 
+			writeToLog(fullLog, " SERVER " + message); 
 		}
 		if (serverLoggingIsOn) { 
 			writeToLog(serverLog, message); 

@@ -13,6 +13,7 @@ import java.io.IOException;
 public class Main {
 	
 	/** Native message commands */
+	private static final String POST_RUN_OPTIONS = "POST RunOptions";
 	private static final String POST_USER_DATA = "POST user";
 	private static final String GET_MONITOR_DATA = "GET MonitorRecord";
 	private static final String GET_SUGGESTIONS = "GET suggestions";
@@ -70,7 +71,7 @@ public class Main {
 		 *                         START MONITORING                         
 		 * ----------------------------------------------------------------- */
 		// If Native Message input is ENABLED, the program will accept messages related to 
-		// monitoring from Standard Input until the STOP_MONITORING message is read.
+		// monitoring from Standard Input until the EXIT_NATIVE message is read.
 		if (options.NATIVE_INPUT_ENABLED) {
 			
 			// The first message received from Standard Input should be "connected" to establish 
@@ -85,7 +86,7 @@ public class Main {
 				// Read Native Message from Standard Input
 				nativeMessage = NativeMessage.read(System.in);
 				message = NativeMessage.getJSONValue(nativeMessage, "message");
-					fileLogger.logNativeMessage("Received: " + nativeMessage);
+					fileLogger.logNativeMessage(" ==>  " + nativeMessage);
 				
 				// Parse nativeMessage for the actual content sent.
 				if (message == null) {
@@ -99,14 +100,20 @@ public class Main {
 				else if ( GET_SUGGESTIONS.equalsIgnoreCase(message) ) {
 					getSuggestionsFromServer();
 				}
-				else if (GET_SYSTEM_INFO.equalsIgnoreCase(message)) {
+				else if ( GET_SYSTEM_INFO.equalsIgnoreCase(message) ) {
 					SystemInformation info = monitor.getSysinfo();
 					String infoAsJSON = info.toJSON();
 					// Send Native Message to Standard Output
 					if (options.NATIVE_OUTPUT_ENABLED) {
 						NativeMessage.send(infoAsJSON);
-						fileLogger.logNativeMessage("Sent: " + infoAsJSON);
+						fileLogger.logNativeMessage(" <==  " + infoAsJSON);
 					}
+				}
+				else if ( POST_RUN_OPTIONS.equalsIgnoreCase(message) ) {
+					// Set new run options
+					String newOptions = NativeMessage.getJSONValue(nativeMessage, "content");
+					String[] newArgs = newOptions.split(" ");
+					options = new RunOptions(newArgs);
 				}
 				else if ( POST_USER_DATA.equalsIgnoreCase(message) ) {
 					parseUserData(nativeMessage);
@@ -183,7 +190,7 @@ public class Main {
 		if (options.NATIVE_OUTPUT_ENABLED) {
 			String recordAsJSON = newRecord.toJSON();
 			NativeMessage.send(recordAsJSON);
-				fileLogger.logNativeMessage("Sent: " + recordAsJSON);
+				fileLogger.logNativeMessage(" <==  " + recordAsJSON);
 		}
 		
 	}
@@ -197,18 +204,18 @@ public class Main {
 		// Server: IP = "52.91.154.176", Port = "8000"
 		String suggestions = "[]";
 		if (options.SERVER_MESSAGING_ENABLED) {
-			String serverGetURL = "http://52.91.154.176:8000/suggestion/";
+			String serverGetURL = "http://52.91.154.176:8000/suggestions/";
 			String serverPostURL = "http://52.91.154.176:8000/data/";
 			ServerHandler server = new ServerHandler(serverGetURL, serverPostURL);
 			String sessionLog = log.toJSON();
 			String serverResponse = server.postJSON(sessionLog);
-				fileLogger.logServerMessage("Sent: POST " + sessionLog);
-				fileLogger.logServerMessage("Received: " + serverResponse);
-			if (serverResponse.equals("OK")) {
-				String suggestionRequest = "{\"user\":" + log.getUserID() + ",\"batch\":\"" + log.getBatch() + "\"}";
+				fileLogger.logServerMessage(" <==  POST " + sessionLog);
+				fileLogger.logServerMessage(" ==>  " + serverResponse);
+			if (!serverResponse.contains("ERROR")) {
+				String suggestionRequest = "{\"user\":" + log.getUserID() + ",\"batch\":" + log.getBatch() + "}";
 				suggestions = server.get(suggestionRequest);
-					fileLogger.logServerMessage("Sent: GET " + "suggestions");
-					fileLogger.logServerMessage("Received: " + suggestions);
+					fileLogger.logServerMessage(" <==  GET " + suggestionRequest);
+					fileLogger.logServerMessage(" ==>  " + suggestions);
 			} else {
 				System.err.println();
 				System.err.println(serverResponse);
@@ -216,7 +223,7 @@ public class Main {
 		}
 		if (options.NATIVE_OUTPUT_ENABLED) {
 			NativeMessage.send(suggestions);
-				fileLogger.logNativeMessage("Sent: " + suggestions);
+				fileLogger.logNativeMessage(" <==  " + suggestions);
 		}
 		
 	}

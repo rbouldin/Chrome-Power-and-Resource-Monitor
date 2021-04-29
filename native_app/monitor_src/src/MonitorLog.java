@@ -165,20 +165,6 @@ public class MonitorLog {
 	
 	
 	/**
-	 *  Adds the record to this MonitorLog session as a MonitorRecord object 
-	 *  and as a JSON formatted String.
-	 *  
-	 *  @return True if successful; False if the record failed to be appended 
-	 *          to the MonitorLog List or to the JSON formatted String List.
-	 */
-//	public boolean appendRecord(MonitorRecord record, String recordAsJson) {
-//		boolean recordAdded = monitorRecords.add(record);
-//		boolean jsonAdded = all_records.add(recordAsJson);
-//		return recordAdded && jsonAdded;
-//	}
-	
-	
-	/**
 	 *  Converts this MonitorLog to a JSON formatted String in the following 
 	 *  format:
 	 *  

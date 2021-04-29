@@ -1,7 +1,7 @@
 /** 
  *  NativeMessage.java
  *
- *  VERSION: 2021.04.03
+ *  VERSION: 2021.04.29
  *  AUTHORS: Rae Bouldin, Zinan Guo
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -70,7 +70,14 @@ public class NativeMessage {
 			// specified jsonID.
 			String offsetStr = jsonString.substring(beginIndex);
 			// Find the end of the element with the specified jsonID
-			int offset = offsetStr.indexOf(",\"");
+			int arrayElemOffset = 0;
+			if (offsetStr.length() > (jsonID.length() + 1) 
+					&& offsetStr.charAt(jsonID.length()+1) == '[') {
+				// Check if the JSON element is an array, because we need to 
+				// offset by it's end brace if it is.
+				arrayElemOffset = offsetStr.indexOf(']');
+			}
+			int offset = offsetStr.indexOf(",\"", arrayElemOffset);
 			if (offset < 0) { offset = offsetStr.indexOf("}"); }
 			if (offset > 0) {
 				int endIndex = beginIndex + offset;
