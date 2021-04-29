@@ -1,7 +1,7 @@
 /** 
  *  MonitorLog.java
  *
- *  VERSION: 2021.04.11
+ *  VERSION: 2021.04.29
  *  AUTHORS: Rae Bouldin
  *
  *  DESCRIPTION:
@@ -29,7 +29,7 @@ public class MonitorLog {
 	private String num_tabs;
 	private List<String> all_records;
 	
-	public static final SimpleDateFormat sessionIDFormat = new SimpleDateFormat("YYDDHHmmss");
+	public static final SimpleDateFormat sessionIDFormat = new SimpleDateFormat("DDHHmmss");
 	
 	
 	public MonitorLog(String userID, String suggestionsAsJsonArray, String numTabs) {
@@ -89,6 +89,15 @@ public class MonitorLog {
 		return session_ID;
 	}
 	
+	/**
+	 * @return the session_ID for this MonitorLog as an Integer.
+	 */
+	public int getSessionIDAsInt() {
+		// Remove quotes then parse int.
+		String intValue = session_ID.substring(1, session_ID.length()-1);
+		return Integer.parseInt(intValue);
+	}
+	
 	
 	/**
 	 * @return the sessionDate for this MonitorLog
@@ -125,6 +134,20 @@ public class MonitorLog {
 			return true;
 		}
 		return false;
+	}
+	
+	
+	/**
+	 *  Adds the record to this MonitorLog session as a MonitorRecord object 
+	 *  and as a JSON formatted String.
+	 *  
+	 *  @return True if successful; False if the record failed to be appended 
+	 *          to the MonitorLog List or to the JSON formatted String List.
+	 */
+	public boolean appendRecord(MonitorRecord record) {
+		boolean recordAdded = monitorRecords.add(record);
+		boolean jsonAdded = all_records.add(record.toJSON());
+		return recordAdded && jsonAdded;
 	}
 	
 	
@@ -197,7 +220,7 @@ public class MonitorLog {
 		
 		StringBuilder log = new StringBuilder();
 		log.append("{");
-		log.append("\"batch\":").append("\"0\"").append(","); // TODO: remove after formatting server
+		log.append("\"batch\":").append(session_ID).append(","); // TODO: remove after formatting server
 		log.append("\"user\":").append(user_ID).append(",");
 		log.append("\"session_ID\":").append(session_ID).append(",");
 		log.append("\"suggestions\":").append(suggestions).append(",");
@@ -230,7 +253,7 @@ public class MonitorLog {
 	private double averageCpuPower() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (!Double.isNaN(monitorRecords.get(i).getChromeCpuPower())) {
+			if (Double.isNaN(monitorRecords.get(i).getChromeCpuPower())) {
 				return Double.NaN;
 			}
 			sum += monitorRecords.get(i).getChromeCpuPower();
@@ -249,7 +272,7 @@ public class MonitorLog {
 	private double averageCpuUsage() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (!Double.isNaN(monitorRecords.get(i).getChromeCpuUsage())) {
+			if (Double.isNaN(monitorRecords.get(i).getChromeCpuUsage())) {
 				return Double.NaN;
 			}
 			sum += monitorRecords.get(i).getChromeCpuUsage();
@@ -268,7 +291,7 @@ public class MonitorLog {
 	private double averageGpuUsage() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (!Double.isNaN(monitorRecords.get(i).getChromeGpuUsage())) {
+			if (Double.isNaN(monitorRecords.get(i).getChromeGpuUsage())) {
 				return Double.NaN;
 			}
 			sum += monitorRecords.get(i).getChromeGpuUsage();
@@ -287,7 +310,7 @@ public class MonitorLog {
 	private double averageMemUsage() {
 		double sum = 0.0;
 		for (int i = 0; i < monitorRecords.size(); i++) {
-			if (!Double.isNaN(monitorRecords.get(i).getChromeMemUsage())) {
+			if (Double.isNaN(monitorRecords.get(i).getChromeMemUsage())) {
 				return Double.NaN;
 			}
 			sum += monitorRecords.get(i).getChromeMemUsage();
