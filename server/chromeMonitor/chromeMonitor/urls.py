@@ -20,5 +20,7 @@ from chromeMonitor import view
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('data/', view.store_data),
-    path('suggestion/', view.gen_sugg),
+    # path('suggestion/', view.gen_sugg),
+    path('suggestions/', view.get_suggestions),
+    path('all_suggestions/', view.get_all_suggestions)
 ]
