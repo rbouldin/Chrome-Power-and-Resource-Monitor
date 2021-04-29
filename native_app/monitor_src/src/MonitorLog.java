@@ -23,13 +23,14 @@ public class MonitorLog {
 	private Date sessionDate;
 	private List<MonitorRecord> monitorRecords;
 	
+	private String batch;
 	private String user_ID;
 	private String session_ID;
 	private String suggestions;
 	private String num_tabs;
 	private List<String> all_records;
 	
-	public static final SimpleDateFormat sessionIDFormat = new SimpleDateFormat("DDHHmmss");
+	public static final SimpleDateFormat sessionIDFormat = new SimpleDateFormat("YYDDHHmmss");
 	
 	
 	public MonitorLog(String userID, String suggestionsAsJsonArray, String numTabs) {
@@ -54,9 +55,21 @@ public class MonitorLog {
 		this.session_ID = "\"" + sessionIDFormat.format(sessionDate) + "\"";
 		this.suggestions = "[]";
 		this.num_tabs = "\"\"";
-		
 		this.all_records = new ArrayList<String>();
 		
+		// The batch # trims the first two digits (YY) from the session_ID so 
+		// that it can be read as an Integer in the Database. It would be out 
+		// of the max range otherwise.
+		this.batch = "\"" + this.session_ID.substring(2);
+		
+	}
+	
+	
+	/**
+	 * @return the batch for this MonitorLog
+	 */
+	public String getBatch() {
+		return batch;
 	}
 	
 	
@@ -158,11 +171,11 @@ public class MonitorLog {
 	 *  @return True if successful; False if the record failed to be appended 
 	 *          to the MonitorLog List or to the JSON formatted String List.
 	 */
-	public boolean appendRecord(MonitorRecord record, String recordAsJson) {
-		boolean recordAdded = monitorRecords.add(record);
-		boolean jsonAdded = all_records.add(recordAsJson);
-		return recordAdded && jsonAdded;
-	}
+//	public boolean appendRecord(MonitorRecord record, String recordAsJson) {
+//		boolean recordAdded = monitorRecords.add(record);
+//		boolean jsonAdded = all_records.add(recordAsJson);
+//		return recordAdded && jsonAdded;
+//	}
 	
 	
 	/**
@@ -170,8 +183,9 @@ public class MonitorLog {
 	 *  format:
 	 *  
 	 *  {
+	 *    "batch":"00000000"
      *    "user":"username",
-     *    "session_ID":"0",
+     *    "session_ID":"0000000000",
      *    "suggestions":[],
      *    "tabs":"0",
      *    "avg_cpu_power":"0.0000",
@@ -220,7 +234,7 @@ public class MonitorLog {
 		
 		StringBuilder log = new StringBuilder();
 		log.append("{");
-		log.append("\"batch\":").append(session_ID).append(","); // TODO: remove after formatting server
+		log.append("\"batch\":").append(batch).append(","); // TODO: remove after formatting server
 		log.append("\"user\":").append(user_ID).append(",");
 		log.append("\"session_ID\":").append(session_ID).append(",");
 		log.append("\"suggestions\":").append(suggestions).append(",");

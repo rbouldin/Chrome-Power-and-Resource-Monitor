@@ -176,12 +176,12 @@ public class Main {
 		// Get data from the Monitor as a new MonitorRecord object 
 		// and convert the record to JSON format.
 		MonitorRecord newRecord = monitor.getData();
-		String recordAsJSON = newRecord.toJSON();
 		// Append record data to log file.
-		log.appendRecord(newRecord, recordAsJSON);
+		log.appendRecord(newRecord);
 		
 		// Send Native Message to Standard Output
 		if (options.NATIVE_OUTPUT_ENABLED) {
+			String recordAsJSON = newRecord.toJSON();
 			NativeMessage.send(recordAsJSON);
 				fileLogger.logNativeMessage("Sent: " + recordAsJSON);
 		}
@@ -205,7 +205,7 @@ public class Main {
 				fileLogger.logServerMessage("Sent: POST " + sessionLog);
 				fileLogger.logServerMessage("Received: " + serverResponse);
 			if (serverResponse.equals("OK")) {
-				String suggestionRequest = "{\"user\":" + log.getUserID() + ",\"batch\":\"" + log.getSessionID() + "\"}";
+				String suggestionRequest = "{\"user\":" + log.getUserID() + ",\"batch\":\"" + log.getBatch() + "\"}";
 				suggestions = server.get(suggestionRequest);
 					fileLogger.logServerMessage("Sent: GET " + "suggestions");
 					fileLogger.logServerMessage("Received: " + suggestions);
