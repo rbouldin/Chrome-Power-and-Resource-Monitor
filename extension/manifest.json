@@ -5,7 +5,8 @@
     "manifest_version": 2,
     "permissions": [
         "storage",
-        "nativeMessaging"
+        "nativeMessaging",
+        "tabs"
     ],
     "background": {
         "scripts": ["background.js"]
@@ -14,5 +15,6 @@
         "default_icon": "image/icon_gauge.png",
         "default_popup": "popup.html"
     },
+    "options_page": "options.html",
     "content_security_policy": "script-src 'self' https://www.gstatic.com; object-src 'self'"
 }
