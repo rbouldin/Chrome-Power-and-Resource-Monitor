@@ -1,0 +1,55 @@
+<html>
+ <head><title>Monitor Options</title></head>
+ <body>
+  <h1>Monitor Options</h1>
+  <!-- User Settings -->
+  <h2 id="userInfo"></h2>
+    <div>
+      Change User Name: 
+      <input type="text" id="userNameInput" style="width: 200px"></input>
+    </div><br>
+
+    <div>
+      <b>What kinds of suggestions have you taken?</b><br>
+        <input type="checkbox" id="checkMemLeak">
+        <label for="checkMemLeak">Checked for a memory leak.</label>
+      <br>
+        <input type="checkbox" id="clearBrowsingData">
+        <label for="clearBrowsingData">Cleared browsing data.</label>
+      <br>
+        <input type="checkbox" id="disableHardwareAcceleration">
+        <label for="disableHardwareAcceleration">Disabled hardware acceleration.</label>
+      <br>
+        <input type="checkbox" id="manageExtensions">
+        <label for="manageExtensions">Managed extensions.</label>
+      <br>
+        <input type="checkbox" id="useAdBlocker">
+        <label for="useAdBlocker">Installed an ad blocker.</label>
+      <br>
+        <input type="checkbox" id="useTabDiscarder">
+        <label for="useTabDiscarder">Installed a tab discarder.</label>
+      <br>
+        <input type="checkbox" id="useTabSuspender">
+        <label for="useTabSuspender">Installed a tab suspender.</label>
+    </div><br>
+    
+    <!-- Run Options -->
+    <div>
+      <b>Run Options:</b><br>
+        <input type="checkbox" id="serverCheckbox" class="monitor-options">
+        <label for="serverCheckbox">Send monitoring data to a server (required to generate suggestions).</label>
+      <br>
+        <input type="checkbox" id="loggingCheckbox" class="monitor-options">
+        <label for="loggingCheckbox">Generate a .txt log for each monitoring session.</label>
+    </div><br>
+
+    <!-- Save Changes -->
+    <br>
+    <div id="status"></div>
+      <button id="save">Save</button>
+    </div>
+
+ </body>
+ <!-- Load Options script -->
+ <script src="options.js"></script>
+</html>
