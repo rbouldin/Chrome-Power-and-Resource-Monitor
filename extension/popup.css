@@ -1,36 +1,50 @@
 body {
-    height: 320px;
+    margin:5px;
+    margin-bottom:2px;
+    height: 400px;
     width: 480px;
     z-index:0;
     font-family: Verdana, sans-serif;
 }
 
 header {
+    color: #F5DF4D;
     height: 50px;
-    margin: 0;
+    margin: 0px;
+}
+
+#tab_counter {
+    margin-top: 10px;
+}
+
+#separator {
+    width: 120px;
+    padding-top: 2px;
+    border-bottom: 3px solid #F5DF4D;
 }
 
 #carbon_counter {
     margin: 0px;
+    color: #939597
 }
 
 main {
     position:relative;
     margin: 0px 8px 0px 8px;
     padding: 0px;
-    height: 300px;
+    height: 350px;
     width: calc(100% - 16px);
 }
 
 #details {
     position:absolute;
     margin: 0px;
-    margin-bottom: 10px;
-    padding: 15px 15px 15px 15px;
+    margin-bottom: 4px;
+    padding: 8px 15px 15px 15px;
     width: calc(100% - 30px);
-    height: calc(100% - 40px);
+    height: calc(100% - 105px);
     color: white;
-    background-color: #3a4a53; 
+    background-color: #939597; 
     filter: blur(3px) brightness(70%);
     z-index:10;
 }
@@ -46,8 +60,17 @@ main {
     transform: translate(-50%, -50%);
 }
 
+#suggestion {
+    position:absolute;
+    top: 275px;
+    height: 68px;
+    width: 100%;
+    margin: 0px;
+    background-color: #939597;
+}
+
 .header {
-    margin: 8px 8px 8px 8px;
+    margin: 8px 8px 3px 8px;
 }
 
 h2 {
@@ -73,6 +96,13 @@ h2 {
     flex-direction: column;
     flex-basis: 100%;
     flex: 2
+}
+
+.triple-column {
+    display: flex;
+    flex-direction: column;
+    flex-basis: 100%;
+    flex: 3
 }
 
 
@@ -113,6 +143,7 @@ h2 {
 }
 
 #start_monitor {
+    color: #F5DF4D;
     position: static;
     width: 190px;
     left: calc(50% - 95px);
@@ -192,4 +223,48 @@ h2 {
 .tooltip:hover .tooltiptext {
     visibility: visible;
     opacity: 1;
+}
+
+.suggestion_title {
+    background-color: #F5DF4D;
+    color:white;
+    padding: 4px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.suggestion_detail{
+    padding: 6px;
+}
+
+.bttn-bordered {
+    color:#F5DF4D;
+}
+
+input:checked {
+    /* change later */
+    color: #F5DF4D;
+}
+
+.suggestion_text {
+    position:absolute;
+}
+
+.suggestion_cover {
+    position:absolute;
+
+    top: 50%;
+    left: 62.5%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.line {
+    margin: 8px;
+    background-color: rgb(185, 185, 185);
+    color:rgb(238, 238, 238);
+    font-size: 17px;
+    padding-left: 8px;
+    width: 310px;
+    text-align: left;
 }
