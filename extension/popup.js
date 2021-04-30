@@ -1,3 +1,6 @@
+//determine whether need to blur
+var newUser = true;
+
 //header info module
 //============================
 //tab count---------------
@@ -210,12 +213,23 @@ dataPort.onMessage.addListener(function(msg) {
     }
 })
 
+let paused = false;
 let click_events = function () {
     document.getElementById("start_monitor").addEventListener("click", function () {
         newSession();
     });
     document.getElementById("stop_monitor").addEventListener("click", function () {
         endSession();
+    });
+    document.getElementById("pause_monitor").addEventListener("click", function () {
+        if (paused){
+            document.getElementById("pause_monitor").innerText = "Pause";
+            timer = setInterval(dataTimer, 1000);
+        } else {
+            document.getElementById("pause_monitor").innerText = "Resume";
+            clearInterval(timer);
+        }
+        paused = !paused;
     });
 };
 

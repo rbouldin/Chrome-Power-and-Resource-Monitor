@@ -16,6 +16,7 @@
   <header>
     <div class="header">
       <h2 id="tab_counter">Number of tabs opened:</h2>
+      <div id="separator"></div>
       <h3 id="carbon_counter">Total Carbon footprint by chrome:</h3>
     </div>
   </header>
@@ -24,24 +25,24 @@
     <div id="details">
       <div class="row">
         <div class="double-column">
-             <h4 class="detail_info power_info" id="curr_power">Current power usage: N/A W
-              <i class='help_icon tooltip'>
-                <span class="tooltiptext tooltip-bottom"> 
-                  How do we calculate the power usage? <br>
-                  We estimate the power usage of the chrome (P) based on two data from your computer, 
-                  the maximum cpu power (C) and the current cpu usage (X).
-                  Then we use this formula to estimate power usage: 
-                  <br>
-                  P = (X * C) / (0.412 X + 0.246) 
-                  <br> 
-                  This numbers in the formula is derived from the average power consumption percentage of the cpu
-                  within an idle system and a fully loaded system. Data comes from the article
-                  "Power Consumption Breakdown on a Modern Laptop" by Aqeel Mahesri, and V. Vardhan (2005).
-                </span>
-              </i>
-            </h4>
-            <h4 class="detail_info power_info" id="total_power">Total power usage: N/A Wh</h4>
-            
+          <h4 class="detail_info power_info" id="curr_power">Current power usage: N/A W
+            <i class='help_icon tooltip'>
+              <span class="tooltiptext tooltip-bottom">
+                How do we calculate the power usage? <br>
+                We estimate the power usage of the chrome (P) based on two data from your computer,
+                the maximum cpu power (C) and the current cpu usage (X).
+                Then we use this formula to estimate power usage:
+                <br>
+                P = (X * C) / (0.412 X + 0.246)
+                <br>
+                This numbers in the formula is derived from the average power consumption percentage of the cpu
+                within an idle system and a fully loaded system. Data comes from the article
+                "Power Consumption Breakdown on a Modern Laptop" by Aqeel Mahesri, and V. Vardhan (2005).
+              </span>
+            </i>
+          </h4>
+          <h4 class="detail_info power_info" id="total_power">Total power usage: N/A Wh</h4>
+
         </div>
         <div class="column">
           <div class="right_column">
@@ -71,6 +72,21 @@
         <input type="checkbox">
         Generate a log for this monitor session
       </label>
+    </div>
+
+    <div id="suggestion" class="row">
+      <div class="suggestion_title column">
+        SUGGESTION BASED ON YOUR DATA
+      </div>
+      <div class="suggestion_detail triple-column">
+        <div class="suggestion_text">
+        
+        </div>
+        <div class="suggestion_cover">
+          <div class = "line">START MONITOR ONCE</div>
+          <div class = "line">TO GET SUGGESTION</div>
+        </div>
+      </div>
     </div>
   </main>
 
