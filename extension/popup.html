@@ -49,7 +49,16 @@
             <button id="pause_start_btn" class="bttn-bordered bttn-md">Pause</button>
             <button id="stop_start_btn" class="bttn-bordered bttn-md">Stop</button>
           </div>
-          <h4 id="monitor_timer">00:00:00s</h4>
+          <h4 id="monitor_timer">
+            <i class='info_icon tooltip'>
+             <span class="tooltiptext tooltiptext_narrow tooltip-bottom">
+              The number above can be used to set the time you want to monitor
+              chrome resource usage. The format is MM:SS. By default it is 00:00,
+              which means there is not limit, the monitor would only stop if you click
+              The stop button.
+            </span>
+            </i>
+          <text id="timer_text">00:00:00s</text></h4>
         </div>
       </div>
 

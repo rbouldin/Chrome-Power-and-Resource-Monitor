@@ -87,6 +87,7 @@ var sendPost = function (userId) {
     nativePort.postMessage({ "message": "GET sysInfo" });
 }
 
+var monitorLimit;
 var listenNative = function (msg) {
     if (!popupConnected || !nativeConnected){
         return;
@@ -109,7 +110,10 @@ var listenNative = function (msg) {
         sessionPower += currPower * timeElapsed;
         lastQuery = new Date();
 
-        if(popupConnected){
+        if (monitorLimit != 0 && (currTime.getTime() - monitorStartTime.getTime()) / 1000 > monitorLimit){
+            stopMonitor();
+        }
+        else if(popupConnected){
             popupPort.postMessage({type: "newData", cpu: cpuData, gpu: gpuData, mem: memData, curr: currPower, session: sessionPower});
         }
     }
@@ -170,6 +174,7 @@ chrome.runtime.onConnect.addListener(function(dataPort) {
         popupConnected = true;
         popupPort.onMessage.addListener(function(msg) {
             if (msg.type == "startMonitor"){
+                monitorLimit = msg.limit;
                 connectNative();
                 moveMonitorToFg();
             } else if (msg.type == "stopMonitor"){            

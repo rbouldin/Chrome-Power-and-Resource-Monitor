@@ -157,12 +157,12 @@ h2 {
 
 #monitor_timer{
     text-align: right;
+    height:15px;
     margin: 0px;
     margin-top: 6px;
     margin-right: 6px;
     color: white;
 }
-
 
 .help_icon {
     position: absolute;
@@ -173,6 +173,15 @@ h2 {
     height: 15px;
     width: 15px;
     display: block;
+    /* Other styles here */
+}
+
+.info_icon {
+    position: absolute;
+    background: url('lib/info_white_18dp.svg');
+    background-size: 14px;
+    height: 14px;
+    width: 14px;
     /* Other styles here */
 }
 
@@ -205,6 +214,11 @@ h2 {
     /* Fade in tooltip */
     opacity: 0;
     transition: opacity 0.3s;
+}
+
+.tooltip .tooltiptext_narrow {
+    width: 120px;
+    margin-left: -60px;
 }
 
 /* Tooltip arrow */
@@ -267,4 +281,8 @@ input:checked {
     padding-left: 8px;
     width: 310px;
     text-align: left;
+}
+
+.edit_hover {
+    cursor: text;
 }

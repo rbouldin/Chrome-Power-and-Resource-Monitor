@@ -1,3 +1,10 @@
+const countSeconds = (str) => {
+    const [mm = '0', ss = '0'] = (str || '0:0').split(':');
+    const minute = parseInt(mm, 10) || 0;
+    const second = parseInt(ss, 10) || 0;
+    return (minute*60) + (second);
+ };
+
 //visual parts
 var hideButtonLayer = function () {
     document.getElementById("button_layer").style.visibility = "hidden";
@@ -10,13 +17,23 @@ var showButtonLayer = function () {
 }
 
 var changeStoppedButtons = function () {
-    document.getElementById("pause_start_btn").innerText = "Start timer";
     document.getElementById("stop_start_btn").innerText = "Start";
+
+    var SessionTimeElem = document.getElementById("pause_start_btn");
+    SessionTimeElem.removeEventListener("click", null);
+    SessionTimeElem.setAttribute("contenteditable", "true");
+    SessionTimeElem.classList.add("edit_hover");
+    SessionTimeElem.innerHTML = "00:00";
 }
 
 var changeStartedButtons = function () {
     document.getElementById("pause_start_btn").innerText = "Pause";
     document.getElementById("stop_start_btn").innerText = "Stop";
+
+    var SessionTimeElem = document.getElementById("pause_start_btn");
+    SessionTimeElem.addEventListener("click", pauseBtn);
+    SessionTimeElem.setAttribute("contenteditable", "false");
+    SessionTimeElem.classList.remove("edit_hover");
 }
 
 //header info module
@@ -60,10 +77,20 @@ var formatTime = function (TimeDiff) {
 
 //Timer -------------------
 var timer;
+var monitorTimeLimit = 0; 
+var monitorStarted = false;
+
 var timeTimer = function () {
     var currTime = new Date();
     var timeElapsed = currTime.getTime() - monitorStartTime.getTime();
-    document.getElementById("monitor_timer").innerText = formatTime(timeElapsed);
+    if(monitorTimeLimit != 0 && (timeElapsed / 1000) > monitorTimeLimit) {
+        monitorStarted = false;
+        changeStoppedButtons();
+        clearInterval(timer);
+        finishChart();
+    } else {
+        document.getElementById("timer_text").innerText = formatTime(timeElapsed);
+    }   
 }
 
 //data chart
@@ -153,7 +180,8 @@ var clearChart = function () {
     options.hAxis.viewWindow.max = maxDataPoints;
     chart.draw(data, options);
 
-    document.getElementById("curr_power").innerText = "Current power usage: 0.00 W";
+    var powerDisplay = document.getElementById("curr_power").childNodes[0];
+    powerDisplay.nodeValue = "Current power usage: 0.00 W";
     document.getElementById("total_power").innerText = "Total power usage: 0.00 Wh";
     document.getElementById("cpu_info").innerText = "CPU: 00.00%";
     document.getElementById("gpu_info").innerText = "GPU: 00.00%";
@@ -177,14 +205,13 @@ var loadFromBg = function () {
         chart = new google.visualization.LineChart(chartElement);
         chart.draw(data, options);
     });
-    document.getElementById("curr_power").innerText = "Current power usage: 0.00 W";
+    var powerDisplay = document.getElementById("curr_power").childNodes[0];
+    powerDisplay.nodeValue = "Current power usage: 0.00 W";
     document.getElementById("total_power").innerText = "Total power usage: " + bg.sessionPower.toFixed(2) + " Wh"
 }
 
 //native message
 //============================
-var monitorStarted = false;
-
 var receiveData = function (cpu, gpu, mem, currPower, sessionPower) {
     if (!monitorStarted) {
         return;
@@ -203,13 +230,14 @@ var receiveData = function (cpu, gpu, mem, currPower, sessionPower) {
     updateData(cpu, gpu, mem);
 }
 
-var newSession = function () {
+var newSession = function (timeLimit) {
     monitorStarted = true;
     clearChart();
     changeStartedButtons();
-    dataPort.postMessage({ type: "startMonitor" });
+    dataPort.postMessage({ type: "startMonitor", limit: timeLimit});
 
     monitorStartTime = new Date();
+    monitorTimeLimit = timeLimit;
     timer = setInterval(timeTimer, 1000);
 
     if (bg.newUser) {
@@ -239,34 +267,41 @@ dataPort.onMessage.addListener(function (msg) {
     }
 })
 
+var pauseBtn = function() {
+    if (monitorStarted) {
+        if (paused) {
+            dataPort.postMessage({ type: "resume" });
+            timer = setInterval(timeTimer, 1000);
+            document.getElementById("pause_start_btn").innerText = "Pause";
+        } else {
+            dataPort.postMessage({ type: "pause" });
+            clearInterval(timer);
+            document.getElementById("pause_start_btn").innerText = "Resume";
+        }
+        paused = !paused;
+    } else {
+        //timer later
+    }
+}
+
 let paused = false;
 let click_events = function () {
     document.getElementById("start_monitor").addEventListener("click", function () {
-        newSession();
+        newSession(0);
     });
     document.getElementById("stop_start_btn").addEventListener("click", function () {
         if (monitorStarted) {
             endSession();
         } else {
-            newSession();
-        }
-    });
-    document.getElementById("pause_start_btn").addEventListener("click", function () {
-        if (monitorStarted) {
-            if (paused) {
-                dataPort.postMessage({ type: "resume" });
-                timer = setInterval(timeTimer, 1000);
-                document.getElementById("pause_start_btn").innerText = "Pause";
-            } else {
-                dataPort.postMessage({ type: "pause" });
-                clearInterval(timer);
-                document.getElementById("pause_start_btn").innerText = "Resume";
+            var timeLimit = 0;
+            var timeLimitText = document.getElementById("pause_start_btn").innerText;
+            if (timeLimitText != "00:00"){
+                timeLimit = countSeconds(timeLimitText);
             }
-            paused = !paused;
-        } else {
-            //timer later
+            newSession(timeLimit);
         }
     });
+    document.getElementById("pause_start_btn").addEventListener("click", pauseBtn);
 };
 
 var initBasedOnStatus = function () {
