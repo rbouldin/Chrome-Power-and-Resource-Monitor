@@ -17,6 +17,7 @@ public class Main {
 	private static final String POST_USER_DATA = "POST user";
 	private static final String GET_MONITOR_DATA = "GET MonitorRecord";
 	private static final String GET_SUGGESTIONS = "GET suggestions";
+	private static final String GET_USER_EXISTS = "GET user exists";
 	private static final String STOP_MONITORING = "STOP monitoring";
 	private static final String EXIT_NATIVE = "EXIT NATIVE";
 	
@@ -109,6 +110,9 @@ public class Main {
 						fileLogger.logNativeMessage(" <==  " + infoAsJSON);
 					}
 				}
+				else if ( GET_USER_EXISTS.equalsIgnoreCase(message) ) {
+					getUserExistsFromServer(nativeMessage);
+				}
 				else if ( POST_RUN_OPTIONS.equalsIgnoreCase(message) ) {
 					// Set new run options
 					String newOptions = NativeMessage.getJSONValue(nativeMessage, "content");
@@ -129,6 +133,11 @@ public class Main {
 					
 				}
 				else {
+					if (options.NATIVE_OUTPUT_ENABLED) {
+						String nativeErr = "{\"message\":\"error: unrecognized command " + message + "\"}";
+						NativeMessage.send(nativeErr);
+							fileLogger.logNativeMessage(" <==  " + nativeErr);
+					}
 					System.err.println("Unexpected message received by Standard Input '" + nativeMessage + "'.");
 					fileLogger.logError("Unexpected message received by Standard Input '" + nativeMessage + "'.");
 				}
@@ -191,6 +200,38 @@ public class Main {
 			String recordAsJSON = newRecord.toJSON();
 			NativeMessage.send(recordAsJSON);
 				fileLogger.logNativeMessage(" <==  " + recordAsJSON);
+		}
+		
+	}
+	
+	private static void getUserExistsFromServer(String nativeMessage) throws IOException {
+		
+		String response = "{\"userExists\":\"err\"}";
+		String user = NativeMessage.getJSONValue(nativeMessage, "user");
+		
+		// Server: IP = "52.91.154.176", Port = "8000"
+		if (options.SERVER_MESSAGING_ENABLED) {
+			String serverGetURL = "http://52.91.154.176:8000/does_user_exist/";
+			String serverPostURL = "http://52.91.154.176:8000/data/";
+			ServerHandler server = new ServerHandler(serverGetURL, serverPostURL);
+			String request = "{\"user\":\"" + user + "\"}";
+			String serverResponse = server.get(request);
+				fileLogger.logServerMessage(" <==  POST " + request);
+				fileLogger.logServerMessage(" ==>  " + serverResponse);
+			if (!serverResponse.contains("ERROR")) {
+				if (serverResponse.contains("True")) {
+					response = "{\"userExists\":\"true\"}";
+				} else if (serverResponse.contains("False")) {
+					response = "{\"userExists\":\"false\"}";
+				}
+			} else {
+				System.err.println();
+				System.err.println(serverResponse);
+			}
+		}
+		if (options.NATIVE_OUTPUT_ENABLED) {
+			NativeMessage.send(response);
+				fileLogger.logNativeMessage(" <==  " + response);
 		}
 		
 	}
