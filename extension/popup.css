@@ -126,7 +126,7 @@ h2 {
     margin-right: 4px;
 }
 
-#stop_monitor {
+#stop_start_btn {
     padding: 0px;
     font-size: 14px;
     height: 25px;
@@ -134,7 +134,7 @@ h2 {
     outline: none;
 }
 
-#pause_monitor {
+#pause_start_btn {
     padding: 0px;
     font-size: 14px;
     height: 25px;
