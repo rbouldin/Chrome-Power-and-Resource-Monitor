@@ -5,22 +5,6 @@
     const newUserName = document.getElementById('userNameInput').value;
     if (newUserName) {
       // Check if the name is already taken on the server.
-      // var nameTaken = false;
-      // var message = "";
-      // chrome.runtime.sendNativeMessage(
-      //   'com.chrome.monitor',
-      //   { "message": "GET user exists", "user": "" + newUserName },
-      //   function(response) {
-      //     message = JSON.stringify(response);
-      //     console.log("Received " + JSON.stringify(response));
-      //   });
-      // chrome.runtime.sendNativeMessage(
-      //   'com.chrome.monitor',
-      //   { "message": "EXIT NATIVE" },
-      //   function(response) {
-      //     console.log("Received " + JSON.stringify(response));
-      //   });
-      // nameTaken = message.includes('true');
       var nameTaken = userExists(newUserName);
       console.log("nameTaken = " + nameTaken);
       if (!nameTaken) {
@@ -202,67 +186,63 @@
 // ------------------------------------------------------------------------- //
 //                              NATIVE MESSAGING                             //
 // ------------------------------------------------------------------------- //
+var port;
 var connected = false;
-var lastMessage = "err";
+var lastMessage = "no data";
 
-function userExists(name) {
-  var gotMsgFromNative = false;
+var userExists = function(name) {
   var exists = true;
   var hostName = "com.chrome.monitor";
   var getMsg = {"message": "GET user exists", "user": "" + name};
   var exitMsg = {"message": "EXIT NATIVE"};
-
-  // chrome.runtime.sendNativeMessage(hostName, getMsg, function(response) {
-  //   console.log("made it here");
-  //   console.log("sent: " + getMsg);
-  //   if (chrome.runtime.lastError) {
-  //       alert("ERROR: " + chrome.runtime.lastError.message);
-  //   } else {
-  //     console.log("got: " + response);
-  //     exists = (response.userExists == 'true');
-  //     chrome.runtime.sendNativeMessage(hostName, exitMsg);
-  //     console.log("sent: " + exitMsg);
-  //   }
-  // });
 
   if (!connected) {
     connectNative();
   }
   if (connected) {
     sendNativeMessage(getMsg);
-    if (lastMessage.includes("err")) {
-      console.log("something went wrong");
+    console.log("lastMessage = " + lastMessage);
+    if (lastMessage.includes("no data")) {
+      console.log("Something went wrong communicating with the native messaging host.");
+    } 
+    else if (lastMessage.includes("err")) {
+      console.log("Couldn't connect to server.");
+      alert("Error connecting to the server. Your username couldn't be updated.");
+    }
+    else {
+      console.log("Bingo!");
+      // exists = (lastMessage.includes('true');
     }
     sendNativeMessage(exitMsg);
   } else {
     console.log("Couldn't connect to native.");
-    alert("Error connecting to the server. Your username couldn't be updated.");
+    alert("Error connecting to the native host. Your username couldn't be updated.");
   }
   return exists;
 }
 
-function sendNativeMessage(message) {
+var sendNativeMessage = function(message) {
   port.postMessage(message);
-  console.log("Sent native message: " + JSON.stringify(message));
+  console.log("NATIVE  <==  " + JSON.stringify(message));
 }
 
-function onNativeMessage(message) {
-  console.log("Received native message: " + message);
-  var lastMessage = "" + message.userExists;
+var onNativeMessage = function(message) {
+  console.log("NATIVE  ==>  " + JSON.stringify(message));
+  lastMessage = JSON.stringify(message);
   console.log("lastMessage = " + lastMessage);
 }
 
-function onNativeDisconnect() {
+var onNativeDisconnect = function() {
   connected = false;
   console.log(chrome.runtime.lastError.message);
 }
 
-function connectNative() {
+var connectNative = function() {
   var hostName = "com.chrome.monitor";
   console.log("Connecting to native messaging host: " + hostName);
   port = chrome.runtime.connectNative(hostName);
+  connected = true;
   port.onMessage.addListener(onNativeMessage);
   port.onDisconnect.addListener(onNativeDisconnect);
-  connected = true;
 }
 // ------------------------------------------------------------------------- //
