@@ -1,6 +1,5 @@
 # SPECIFIC FILES:
 **/LOG-*.txt
-**/README.md
 
 # SPECIFIC DIRECTORIES:
 native_app/**/powershell_scripts
