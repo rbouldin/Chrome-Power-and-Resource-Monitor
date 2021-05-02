@@ -35,7 +35,7 @@
                 <br>
                 P = (X * C) / (0.412 X + 0.246)
                 <br>
-                This numbers in the formula is derived from the average power consumption percentage of the cpu
+                The numbers in the formula is derived from the average power consumption percentage of the cpu
                 within an idle system and a fully loaded system. Data comes from the article
                 "Power Consumption Breakdown on a Modern Laptop" by Aqeel Mahesri, and V. Vardhan (2005).
               </span>
@@ -73,12 +73,12 @@
       <button class="bttn-simple bttn-lg bttn-default" id="start_monitor">start monitor</button>
       <br>
       <label class="monitor-options">
-        <input type="checkbox" checked="checked">
+        <input type="checkbox" id = "serverCheckbox" checked="checked">
         Send the data to the server for usage suggestion
       </label>
       <br>
       <label class="monitor-options">
-        <input type="checkbox">
+        <input type="checkbox" id = "loggingCheckbox">
         Generate a log for this monitor session
       </label>
     </div>
@@ -88,9 +88,7 @@
         SUGGESTION BASED ON YOUR DATA
       </div>
       <div class="suggestion_detail triple-column">
-        <div class="suggestion_text">
-        
-        </div>
+        <div class="suggestion_text"></div>
         <div class="suggestion_cover">
           <div class = "line">START MONITOR ONCE</div>
           <div class = "line">TO GET SUGGESTION</div>

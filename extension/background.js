@@ -3,17 +3,21 @@ var ACTIVE_MONITOR_INTERVAL = 1;
 var BG_MONITOR_INTERVAL = 10;
 var CARBON_INTERVAL = 20;
 
-var newUser = true;
+//options
+var serverOpen = true;
+var logOpen = false;
+
 //counters
 var count = 0;
 var totalCO2 = 0;
 var avgPower = 5;
 var avgPowerLoggedTime = 0;
 
+var newUser = true;
+//{"message":"POST RunOptions","content":"-server on -nativeOutput off"}
 
 //native data query
 //=======================================================
-
 //unique user id --------------------
 var getRandomToken = function () {
     var randomPool = new Uint8Array(4);
@@ -83,40 +87,62 @@ var resetSessionData = function() {
 }
 
 var sendPost = function (userId) {
+    console.log(userId);
     nativePort.postMessage({ "message": "POST user", "user_id": "" + userId, "suggestions": [], "tabs": "" + count });
     nativePort.postMessage({ "message": "GET sysInfo" });
 }
 
 var monitorLimit;
 var listenNative = function (msg) {
-    if (!popupConnected || !nativeConnected){
+    //suggesiton message
+    if (msg.suggestion_msg != null){
+        if(popupConnected) {
+            popupPort.postMessage({type: "suggestion", text:msg.suggestion_msg});
+        }
+        chrome.storage.sync.set({ lastSuggestion: suggestion_msg });
         return;
     }
 
+    //sysInfo message
     var maxCpu = parseFloat(msg.max_cpu_power);
     if (!Number.isNaN(maxCpu)){
         cpuPackage = maxCpu;
+        return;
     }
-    else {
-        var cpuData = parseFloat(msg.cpu_usage);
-        var gpuData = parseFloat(msg.gpu_usage);
-        var memData = parseFloat(msg.mem_usage);
-        sessionIndex++;
-        sessionData.push([sessionIndex, cpuData, gpuData, memData]);
+    
+    //data message
+    var cpuData = parseFloat(msg.cpu_usage);
+    var gpuData = parseFloat(msg.gpu_usage);
+    var memData = parseFloat(msg.mem_usage);
+    sessionIndex++;
+    sessionData.push([sessionIndex, cpuData, gpuData, memData]);
 
-        currPower = calculate_power(cpuData / 100)
-        var currTime = new Date();
-        var timeElapsed = (currTime.getTime() - lastQuery.getTime()) / (3600 * 1000);
-        sessionPower += currPower * timeElapsed;
-        lastQuery = new Date();
+    currPower = calculate_power(cpuData / 100)
+    var currTime = new Date();
+    var timeElapsed = (currTime.getTime() - lastQuery.getTime()) / (3600 * 1000);
+    sessionPower += currPower * timeElapsed;
+    lastQuery = new Date();
 
-        if (monitorLimit != 0 && (currTime.getTime() - monitorStartTime.getTime()) / 1000 > monitorLimit){
-            stopMonitor();
-        }
-        else if(popupConnected){
-            popupPort.postMessage({type: "newData", cpu: cpuData, gpu: gpuData, mem: memData, curr: currPower, session: sessionPower});
-        }
+    if (monitorLimit != 0 && (currTime.getTime() - monitorStartTime.getTime()) / 1000 > monitorLimit){
+        stopMonitor();
     }
+    else if(popupConnected){
+        popupPort.postMessage({type: "newData", cpu: cpuData, gpu: gpuData, mem: memData, curr: currPower, session: sessionPower});
+    }
+}
+
+var formatOptions = function (){
+    var option = "";
+    if (serverOpen){
+        option += "-server on"
+    } else {
+        option += "-server off"
+    }
+
+    if (logOpen){
+        option += " -log"
+    }
+    return option;
 }
 
 var connectNative = function () {
@@ -127,8 +153,9 @@ var connectNative = function () {
 
     nativePort = chrome.runtime.connectNative("com.chrome.monitor");
     nativePort.onMessage.addListener(listenNative);
-    nativePort.onDisconnect.addListener(function() {console.log("Native Disconnected");});
+    //nativePort.onDisconnect.addListener(function() {console.log("Native Disconnected");});
     nativePort.postMessage({ "message": "connected" });
+    nativePort.postMessage({"message":"POST RunOptions","content":formatOptions()});
     userIdFunc(sendPost);
 }
 
@@ -136,6 +163,15 @@ var updateData = function () {
     if (nativeConnected) {
         nativePort.postMessage({ "message": "GET MonitorRecord" });
     }
+}
+
+var updateSuggestion = function () {
+    chrome.storage.sync.get('lastSuggestion', function (items) {
+        var sug = items.lastSuggestion;
+        if (sug) {
+            popupPort.postMessage({type: "suggestion", text:sug});
+        }
+    });
 }
 
 var bgTimer;
@@ -183,6 +219,10 @@ chrome.runtime.onConnect.addListener(function(dataPort) {
                 pauseMonitor();
             } else if (msg.type == "resume"){
                 resumeMonitor();
+            } else if (msg.type == "updateSuggestion"){            
+                updateSuggestion();
+            } else if (msg.type == "options"){
+                updateOptions(msg.server, msg.log);
             }
         });
         popupPort.onDisconnect.addListener(function() {
@@ -247,6 +287,33 @@ chrome.storage.sync.get('totalCO2', function (items) {
         chrome.storage.sync.set({ totalCO2: 0 });
     }
 });
+
+//fetch user options
+chrome.storage.sync.get('serverOption', function (items) {
+    var serverOp = items.serverOption;
+    if (serverOp) {
+        serverOpen = serverOp;
+    } else {
+        chrome.storage.sync.set({ serverOption: serverOpen });
+    }
+});
+
+chrome.storage.sync.get('logOption', function (items) {
+    var logOp = items.logOption;
+    if (logOp) {
+        logOpen = logOp;
+    } else {
+        chrome.storage.sync.set({ logOption: logOpen });
+    }
+});
+
+var updateOptions = function(userServerOption, userLogOption)  {
+    serverOpen = userServerOption;
+    logOp = userLogOption;
+
+    chrome.storage.sync.set({ serverOption: userServerOption });
+    chrome.storage.sync.set({ logOption: userLogOption });
+}
 
 //timer to count the CO2 ---------------------
 var carbonTimer;

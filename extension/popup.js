@@ -234,15 +234,18 @@ var newSession = function (timeLimit) {
     monitorStarted = true;
     clearChart();
     changeStartedButtons();
+
+    if (bg.newUser) {
+        var serverOption = document.getElementById("serverCheckbox").checked;
+        var loggingOption = document.getElementById("loggingCheckbox").checked;
+        dataPort.postMessage({ type: "options", server: serverOption, log: loggingOption});
+        hideButtonLayer();
+    }
     dataPort.postMessage({ type: "startMonitor", limit: timeLimit});
 
     monitorStartTime = new Date();
     monitorTimeLimit = timeLimit;
     timer = setInterval(timeTimer, 1000);
-
-    if (bg.newUser) {
-        hideButtonLayer();
-    }
 }
 
 var endSession = function () {
@@ -254,6 +257,12 @@ var endSession = function () {
     finishChart();
 }
 
+//suggestion display
+var updateSuggestion = function(suggestionText){
+    document.getElementsByClassName("suggestion_cover")[0].style.visibility = "hidden";
+    document.getElementsByClassName("suggestion_text")[0].style.visibility = "visible";
+    document.getElementsByClassName("suggestion_text")[0].innerHTML = "Suggestion(Based on last session):<br>" + suggestionText;
+}
 
 //binding events
 //=============================
@@ -264,6 +273,8 @@ dataPort.onMessage.addListener(function (msg) {
         updateCarbonFootprint();
     } else if (msg.type == "newData") {
         receiveData(msg.cpu, msg.gpu, msg.mem, msg.curr, msg.session);
+    } else if (msg.type == "suggestion") {
+        updateSuggestion(msg.text);
     }
 })
 
@@ -320,9 +331,15 @@ var initBasedOnStatus = function () {
     }
 }
 
+var updateSuggestion = function (){
+    document.getElementsByClassName("suggestion_text")[0].style.visibility = "hidden";
+    dataPort.postMessage({ type: "updateSuggestion" });
+}
+
 document.addEventListener("DOMContentLoaded", function () {
     initBasedOnStatus();
     click_events();
     updateTabCount();
     updateCarbonFootprint();
+    updateSuggestion();
 });

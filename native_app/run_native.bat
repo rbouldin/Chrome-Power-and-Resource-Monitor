@@ -21,4 +21,4 @@
 ::                           file named LOG-<SessionID>-Server.txt
 ::
 @echo off
-java -jar "monitor.jar" -server on -log %*
+java -jar "monitor.jar" %*

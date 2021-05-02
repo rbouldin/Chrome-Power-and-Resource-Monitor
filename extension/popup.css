@@ -248,7 +248,7 @@ h2 {
 }
 
 .suggestion_detail{
-    padding: 6px;
+    padding: 4px 6px 4px 6px;
 }
 
 .bttn-bordered {
@@ -261,7 +261,10 @@ input:checked {
 }
 
 .suggestion_text {
+    color: white;
     position:absolute;
+    height:60px;
+    overflow-y: scroll;
 }
 
 .suggestion_cover {
