@@ -19,3 +19,35 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+###################################
+Open Source Projects we used in this project:
+
+#Native app
+java native access (jna) https://github.com/java-native-access/jna
+License: Apache-2.0 OR LGPL-2.1
+
+Operating System Hardware Information (oshi) https://github.com/oshi/oshi
+License: MIT License
+
+Simple Logging Facade for Java (SLF4J) http://www.slf4j.org/
+License: MIT License
+
+#Extension
+bttn.css https://github.com/ganapativs/bttn.css
+License: MIT License
+
+Google Chart https://developers.google.com/chart/terms
+License: CC4.0
+
+Google Icons https://google.github.io/material-design-icons/
+License: Apache License 2.0
+
+Icon for the extension made by Vectors Market from https://www.flaticon.com/"
+
+#Backend Server
+django https://www.djangoproject.com/trademarks/
+License: CC3.0
+
+sqlite https://www.sqlite.org/copyright.html
+License: Public Domain
