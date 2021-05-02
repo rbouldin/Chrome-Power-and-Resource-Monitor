@@ -357,7 +357,7 @@ var initBasedOnStatus = function () {
     }
 }
 
-var updateSuggestion = function (){
+var fetchSuggestion = function (){
     document.getElementsByClassName("suggestion_text")[0].style.visibility = "hidden";
     dataPort.postMessage({ type: "updateSuggestion" });
 }
@@ -367,5 +367,5 @@ document.addEventListener("DOMContentLoaded", function () {
     click_events();
     updateTabCount();
     updateCarbonFootprint();
-    updateSuggestion();
+    fetchSuggestion();
 });

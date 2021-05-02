@@ -273,7 +273,7 @@ input:checked {
     color: white;
     position:absolute;
     height:60px;
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 .suggestion_cover {
