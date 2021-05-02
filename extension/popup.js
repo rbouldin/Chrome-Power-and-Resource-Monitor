@@ -207,7 +207,30 @@ var loadFromBg = function () {
     });
     var powerDisplay = document.getElementById("curr_power").childNodes[0];
     powerDisplay.nodeValue = "Current power usage: 0.00 W";
-    document.getElementById("total_power").innerText = "Total power usage: " + bg.sessionPower.toFixed(2) + " Wh"
+    document.getElementById("total_power").innerText = "Total power usage: " + bg.sessionPower.toFixed(2) + " Wh";
+
+    monitorStartTime = bg.monitorStartTime;
+    monitorTimeLimit = bg.monitorLimit;
+    timer = setInterval(timeTimer, 1000);
+}
+
+var drawLagacy = function () {
+    google.charts.load('current', { 'packages': ['corechart'] }).then(function () {
+        data = new google.visualization.DataTable();
+        data.addColumn('number', 'Time(Second)');
+        data.addColumn('number', 'CPU usage');
+        data.addColumn('number', 'GPU usage');
+        data.addColumn('number', 'MEM usage');
+        data.addRows(bg.sessionData);
+        chartIndex = bg.sessionIndex;
+        if (chartIndex > maxDataPoints) {
+            options.hAxis.viewWindow.max = chartIndex;
+            options.hAxis.viewWindow.min = chartIndex - maxDataPoints;
+        }
+        chartElement = document.getElementById('power_chart');
+        chart = new google.visualization.LineChart(chartElement);
+        chart.draw(data, options);
+    });
 }
 
 //native message
@@ -290,8 +313,6 @@ var pauseBtn = function() {
             document.getElementById("pause_start_btn").innerText = "Resume";
         }
         paused = !paused;
-    } else {
-        //timer later
     }
 }
 
@@ -325,7 +346,12 @@ var initBasedOnStatus = function () {
     monitorStarted = bg.inSession;
     if (monitorStarted) {
         loadFromBg();
-    } else {
+    } else if (bg.lagacyData){
+        bg.lagacyData = false;
+        drawLagacy();
+        changeStoppedButtons();
+    }
+    else {
         drawEmpty();
         changeStoppedButtons();
     }

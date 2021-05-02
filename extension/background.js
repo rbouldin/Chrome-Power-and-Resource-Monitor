@@ -14,7 +14,7 @@ var avgPower = 5;
 var avgPowerLoggedTime = 0;
 
 var newUser = true;
-//{"message":"POST RunOptions","content":"-server on -nativeOutput off"}
+var lagacyData = false;
 
 //native data query
 //=======================================================
@@ -87,7 +87,6 @@ var resetSessionData = function() {
 }
 
 var sendPost = function (userId) {
-    console.log(userId);
     nativePort.postMessage({ "message": "POST user", "user_id": "" + userId, "suggestions": [], "tabs": "" + count });
     nativePort.postMessage({ "message": "GET sysInfo" });
 }
@@ -125,6 +124,9 @@ var listenNative = function (msg) {
 
     if (monitorLimit != 0 && (currTime.getTime() - monitorStartTime.getTime()) / 1000 > monitorLimit){
         stopMonitor();
+        if(!popupConnected){
+            lagacyData = true;
+        }
     }
     else if(popupConnected){
         popupPort.postMessage({type: "newData", cpu: cpuData, gpu: gpuData, mem: memData, curr: currPower, session: sessionPower});

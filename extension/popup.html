@@ -75,6 +75,16 @@
       <label class="monitor-options">
         <input type="checkbox" id = "serverCheckbox" checked="checked">
         Send the data to the server for usage suggestion
+        <i class='help_icon tooltip'>
+          <span class="tooltiptext tooltiptext_medium tooltip-bottom">
+            How do we handle your data? <br>
+            If you choose to enable the data analysis option by server, 
+            After every monitor session, a brief report would be send to our secure server hosted on aws.
+            The report only includes the data you can see during the monitor session (cpu usage, mem usage, tab count, etc.)
+            and the unique user id we randomly genrated for each user. The user id would not link to your identity in any way,
+            and you can always reset the id by reinstall this extension.
+          </span>
+        </i>
       </label>
       <br>
       <label class="monitor-options">

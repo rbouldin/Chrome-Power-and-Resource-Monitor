@@ -168,7 +168,7 @@ h2 {
     position: absolute;
     top: 3px;
 
-    background: url('lib/outline_help_white_18dp.png');
+    background: url('lib/help_white_18dp.svg');
     background-size: 15px;
     height: 15px;
     width: 15px;
@@ -221,16 +221,25 @@ h2 {
     margin-left: -60px;
 }
 
+.tooltip .tooltiptext_medium {
+    width: 300px;
+    margin-left: -300px;
+}
+
 /* Tooltip arrow */
 .tooltip .tooltiptext::after {
     content: " ";
     position: absolute;
     bottom: 100%;
-    left: 50%;
+    left: 48%;
     margin-left: -5px;
     border-width: 5px;
     border-style: solid;
     border-color:  transparent transparent #555 transparent;
+}
+
+.tooltip .tooltiptext_medium::after {
+    left: 95%;
 }
 
 /* Show the tooltip text when you mouse over the tooltip container */
