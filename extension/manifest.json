@@ -1,11 +1,11 @@
 {
-    "name": "Chrome Resourse Monitor",
+    "name": "Power and Resource Monitor",
     "version": "1.0",
-    "description": "Power Monitor extension, Icons made by Vectors Market from https://www.flaticon.com/",
+    "description": "Monitor your browser's power and resource consumption. Icon Attribution: Icon made by Vectors Market from www.flaticon.com",
     "manifest_version": 2,
     "permissions": [
-        "storage",
         "nativeMessaging",
+        "storage",
         "tabs"
     ],
     "background": {
