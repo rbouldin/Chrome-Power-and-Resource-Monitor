@@ -1,7 +1,7 @@
 /** 
  *  Main.java
  *
- *  VERSION: 2021.04.29
+ *  VERSION: 2021.05.02
  *  AUTHORS: Rae Bouldin, Zinan Guo
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -17,8 +17,8 @@ public class Main {
 	private static final String POST_USER_DATA = "POST user";
 	private static final String GET_MONITOR_DATA = "GET MonitorRecord";
 	private static final String GET_SUGGESTIONS = "GET suggestions";
-	private static final String GET_USER_EXISTS = "GET user exists";
-	private static final String STOP_MONITORING = "STOP monitoring";
+//	private static final String GET_USER_EXISTS = "GET user exists";
+//	private static final String STOP_MONITORING = "STOP monitoring";
 	private static final String EXIT_NATIVE = "EXIT NATIVE";
 	
 	private static final String GET_SYSTEM_INFO = "GET sysInfo";
@@ -81,8 +81,9 @@ public class Main {
 			String message = "";
 			
 			// Read from Standard Input until the STOP_MONITORING message is received.
-			while ( !EXIT_NATIVE.equalsIgnoreCase(message) && 
-					!STOP_MONITORING.equalsIgnoreCase(message) ) {
+			while ( !EXIT_NATIVE.equalsIgnoreCase(message) 
+//					&& !STOP_MONITORING.equalsIgnoreCase(message) 
+					) {
 				
 				// Read Native Message from Standard Input
 				nativeMessage = NativeMessage.read(System.in);
@@ -91,6 +92,11 @@ public class Main {
 				
 				// Parse nativeMessage for the actual content sent.
 				if (message == null) {
+					if (options.NATIVE_OUTPUT_ENABLED) {
+						String nativeErr = "{\"message\":\"error: unrecognized message format " + nativeMessage + "\"}";
+						NativeMessage.send(nativeErr);
+							fileLogger.logNativeMessage(" <==  " + nativeErr);
+					}
 					System.err.println("Unexpected message received by Standard Input '" + nativeMessage + "'.");
 					fileLogger.logError("Unexpected message received by Standard Input '" + nativeMessage + "'.");
 					break;
@@ -110,14 +116,31 @@ public class Main {
 						fileLogger.logNativeMessage(" <==  " + infoAsJSON);
 					}
 				}
-				else if ( GET_USER_EXISTS.equalsIgnoreCase(message) ) {
-					getUserExistsFromServer(nativeMessage);
-				}
+//				else if ( GET_USER_EXISTS.equalsIgnoreCase(message) ) {
+//					getUserExistsFromServer(nativeMessage);
+//				}
 				else if ( POST_RUN_OPTIONS.equalsIgnoreCase(message) ) {
 					// Set new run options
 					String newOptions = NativeMessage.getJSONValue(nativeMessage, "content");
 					String[] newArgs = newOptions.split(" ");
 					options = new RunOptions(newArgs);
+					// Write the updated run options to the default file log if logging is enabled for it.
+					if (options.LOGGING_ENABLED) {
+						fileLogger.log(fileLogger.DEFAULT, "Detected a change in the Run Options:");
+						fileLogger.log(fileLogger.DEFAULT, "------------------------------------------------");
+						String nativeEnabled = String.valueOf(options.NATIVE_INPUT_ENABLED || options.NATIVE_OUTPUT_ENABLED).toUpperCase();
+						fileLogger.log(fileLogger.DEFAULT, " NATIVE MESSAGING   " + nativeEnabled);
+						if (!options.NATIVE_INPUT_ENABLED || !options.NATIVE_OUTPUT_ENABLED) {
+							fileLogger.log(fileLogger.DEFAULT, "  > native input    " + options.NATIVE_INPUT_ENABLED);
+							fileLogger.log(fileLogger.DEFAULT, "  > native output   " + options.NATIVE_OUTPUT_ENABLED);
+						}
+						String serverEnabled = String.valueOf(options.SERVER_MESSAGING_ENABLED).toUpperCase();
+						fileLogger.log(fileLogger.DEFAULT, " SERVER MESSAGING   " + serverEnabled);
+						if (!options.NATIVE_INPUT_ENABLED) {
+							fileLogger.log(fileLogger.DEFAULT, " RECORDS            " + options.NUM_RECORDS);
+						}
+						fileLogger.log(fileLogger.DEFAULT, "------------------------------------------------");
+					}
 				}
 				else if ( POST_USER_DATA.equalsIgnoreCase(message) ) {
 					parseUserData(nativeMessage);
@@ -125,9 +148,9 @@ public class Main {
 				else if ( message.equalsIgnoreCase("connected") ) {
 					fileLogger.log(fileLogger.DEFAULT, "Connection Established");
 				}
-				else if ( STOP_MONITORING.equalsIgnoreCase(message) ) {
-					fileLogger.log(fileLogger.DEFAULT, "Detected Signal STOP MONITORING");
-				}
+//				else if ( STOP_MONITORING.equalsIgnoreCase(message) ) {
+//					fileLogger.log(fileLogger.DEFAULT, "Detected Signal STOP MONITORING");
+//				}
 				else if ( EXIT_NATIVE.equalsIgnoreCase(message) ) {
 					fileLogger.log(fileLogger.DEFAULT, "Detected Signal EXIT NATIVE");
 					
@@ -145,14 +168,14 @@ public class Main {
 			}
 			
 		} 
-		// If Native Message input is DISABLED, the program will run monitoring until a specified 
-		// number of records are logged.
-		else {
-			for (int r = 0; r < options.NUM_RECORDS; r++) {
-				getMonitorData();
-			}
-			getSuggestionsFromServer();
-		}
+//		// If Native Message input is DISABLED, the program will run monitoring until a specified 
+//		// number of records are logged.
+//		else {
+//			for (int r = 0; r < options.NUM_RECORDS; r++) {
+//				getMonitorData();
+//			}
+//			getSuggestionsFromServer();
+//		}
 		
 		// Close the log file FileWriters before exiting.
 		fileLogger.closeLogs();
@@ -204,37 +227,35 @@ public class Main {
 		
 	}
 	
-	private static void getUserExistsFromServer(String nativeMessage) throws IOException {
-		
-		String response = "{\"userExists\":\"err\"}";
-		String user = NativeMessage.getJSONValue(nativeMessage, "user");
-		
-		// Server: IP = "52.91.154.176", Port = "8000"
-		if (options.SERVER_MESSAGING_ENABLED) {
-			String serverGetURL = "http://52.91.154.176:8000/does_user_exist/";
-			String serverPostURL = "http://52.91.154.176:8000/data/";
-			ServerHandler server = new ServerHandler(serverGetURL, serverPostURL);
-			String request = "{\"user\":\"" + user + "\"}";
-			String serverResponse = server.get(request);
-				fileLogger.logServerMessage(" <==  POST " + request);
-				fileLogger.logServerMessage(" ==>  " + serverResponse);
-			if (!serverResponse.contains("ERROR")) {
-				if (serverResponse.contains("True")) {
-					response = "{\"userExists\":\"true\"}";
-				} else if (serverResponse.contains("False")) {
-					response = "{\"userExists\":\"false\"}";
-				}
-			} else {
-				System.err.println();
-				System.err.println(serverResponse);
-			}
-		}
-		if (options.NATIVE_OUTPUT_ENABLED) {
-			NativeMessage.send(response);
-				fileLogger.logNativeMessage(" <==  " + response);
-		}
-		
-	}
+//	private static void getUserExistsFromServer(String nativeMessage) throws IOException {
+//		
+//		String response = "{\"userExists\":\"error\"}";
+//		String user = NativeMessage.getJSONValue(nativeMessage, "user");
+//		
+//		// Server: IP = "52.91.154.176", Port = "8000"
+//		if (options.SERVER_MESSAGING_ENABLED) {
+//			String serverGetURL = "http://52.91.154.176:8000/does_user_exist/";
+//			String serverPostURL = "http://52.91.154.176:8000/data/";
+//			ServerHandler server = new ServerHandler(serverGetURL, serverPostURL);
+//			String request = "{\"user\":\"" + user + "\"}";
+//			String serverResponse = server.get(request);
+//				fileLogger.logServerMessage(" <==  POST " + request);
+//				fileLogger.logServerMessage(" ==>  " + serverResponse);
+//			if (serverResponse.contains("True")) {
+//				response = "{\"userExists\":\"true\"}";
+//			} else if (serverResponse.contains("False")) {
+//				response = "{\"userExists\":\"false\"}";
+//			} else {
+//				System.err.println();
+//				System.err.println(serverResponse);
+//			}
+//		}
+//		if (options.NATIVE_OUTPUT_ENABLED) {
+//			NativeMessage.send(response);
+//				fileLogger.logNativeMessage(" <==  " + response);
+//		}
+//		
+//	}
 	
 	/** POST the current log for this monitoring session to the server. 
 	 *  If the POST is successful, then GET suggestions from the server. 
@@ -243,7 +264,7 @@ public class Main {
 		
 		// Send session log to the server.
 		// Server: IP = "52.91.154.176", Port = "8000"
-		String suggestions = "[]";
+		String suggestions = "{\"suggestions\":[],\"suggestion_msg\":\"No suggestions: Something went wrong communicating with the server.\"}";
 		if (options.SERVER_MESSAGING_ENABLED) {
 			String serverGetURL = "http://52.91.154.176:8000/suggestions/";
 			String serverPostURL = "http://52.91.154.176:8000/data/";
@@ -252,11 +273,14 @@ public class Main {
 			String serverResponse = server.postJSON(sessionLog);
 				fileLogger.logServerMessage(" <==  POST " + sessionLog);
 				fileLogger.logServerMessage(" ==>  " + serverResponse);
-			if (!serverResponse.contains("ERROR")) {
+			if (serverResponse.contains("\"Status\":\"OK")) {
 				String suggestionRequest = "{\"user\":" + log.getUserID() + ",\"batch\":" + log.getBatch() + "}";
-				suggestions = server.get(suggestionRequest);
+				String suggestionResponse = server.get(suggestionRequest);
 					fileLogger.logServerMessage(" <==  GET " + suggestionRequest);
-					fileLogger.logServerMessage(" ==>  " + suggestions);
+					fileLogger.logServerMessage(" ==>  " + suggestionResponse);
+				if (suggestionResponse.contains("\"suggestion_msg\"")) {
+					suggestions = suggestionResponse;
+				}
 			} else {
 				System.err.println();
 				System.err.println(serverResponse);
