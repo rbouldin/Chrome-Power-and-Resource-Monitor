@@ -144,7 +144,7 @@ var formatOptions = function (){
     }
 
     if (logOpen){
-        option += " -log"
+        option += " -logForUser"
     }
     console.log("option = " + option);
     return option;
@@ -295,27 +295,18 @@ chrome.storage.sync.get('totalCO2', function (items) {
 
 //fetch user options
 chrome.storage.sync.get('serverEnabled', function (items) {
-    var serverOp = items.serverEnabled;
-    if (serverOp) {
-        serverOpen = serverOp;
-    } else {
-        chrome.storage.sync.set({ serverOption: serverOpen });
-    }
+    var serverOpen = items.serverEnabled;
+    chrome.storage.sync.set({ serverOption: serverOpen });
 });
 
 chrome.storage.sync.get('loggingEnabled', function (items) {
-    var logOp = items.loggingEnabled;
-    if (logOp) {
-        logOpen = logOp;
-    } else {
-        chrome.storage.sync.set({ logOption: logOpen });
-    }
+    var logOpen = items.loggingEnabled;
+    chrome.storage.sync.set({ logOption: logOpen });
 });
 
 var updateOptions = function(userServerOption, userLogOption)  {
     serverOpen = userServerOption;
-    logOp = userLogOption;
-
+    logOpen = userLogOption;
     chrome.storage.sync.set({ serverOption: userServerOption });
     chrome.storage.sync.set({ logOption: userLogOption });
 }
