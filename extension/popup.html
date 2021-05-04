@@ -29,14 +29,14 @@
             <i class='help_icon tooltip'>
               <span class="tooltiptext tooltip-bottom">
                 How do we calculate the power usage? <br>
-                We estimate the power usage of the chrome (P) based on two data from your computer,
+                We estimate Chrome's power usage (P) based on two pieces of data from your computer:
                 the maximum cpu power (C) and the current cpu usage (X).
-                Then we use this formula to estimate power usage:
+                Then we use the following formula to estimate P:
                 <br>
                 P = (X * C) / (0.412 X + 0.246)
-                <br>
-                The numbers in the formula is derived from the average power consumption percentage of the cpu
-                within an idle system and a fully loaded system. Data comes from the article
+                <br><br>
+                The numbers in the formula are derived from the average power consumption percentage of the cpu
+                within an idle system and a fully loaded system. The formula comes from the article
                 "Power Consumption Breakdown on a Modern Laptop" by Aqeel Mahesri, and V. Vardhan (2005).
               </span>
             </i>
@@ -54,8 +54,8 @@
              <span class="tooltiptext tooltiptext_narrow tooltip-bottom">
               The number above can be used to set the time you want to monitor
               chrome resource usage. The format is MM:SS. By default it is 00:00,
-              which means there is not limit, the monitor would only stop if you click
-              The stop button.
+              which means there is no limit and the monitor would only stop if you click
+              the stop button.
             </span>
             </i>
           <text id="timer_text">00:00:00s</text></h4>
@@ -73,23 +73,25 @@
       <button class="bttn-simple bttn-lg bttn-default" id="start_monitor">start monitor</button>
       <br>
       <label class="monitor-options">
-        <input type="checkbox" id = "serverCheckbox" checked="checked">
-        Send the data to the server for usage suggestion
+        <input type="checkbox" id = "serverCheckbox">
+        Send data to server (required to get suggestions).
         <i class='help_icon tooltip'>
           <span class="tooltiptext tooltiptext_medium tooltip-bottom">
             How do we handle your data? <br>
-            If you choose to enable the data analysis option by server, 
-            After every monitor session, a brief report would be send to our secure server hosted on aws.
-            The report only includes the data you can see during the monitor session (cpu usage, mem usage, tab count, etc.)
-            and the unique user id we randomly genrated for each user. The user id would not link to your identity in any way,
-            and you can always reset the id by reinstall this extension.
+            If you choose to send your data to the server, a brief report will 
+            be sent to a secure server hosted on AWS after every monitor session.
+            The report includes the data you can see being collected during the 
+            monitor session (cpu usage, mem usage, tab count, etc.) and a unique 
+            id to identify your data on our server. The id is randomly generated 
+            and does not link to your real identity or Google account in any way;
+            it will be reset if you reinstall this extension.
           </span>
         </i>
       </label>
       <br>
       <label class="monitor-options">
         <input type="checkbox" id = "loggingCheckbox">
-        Generate a log for this monitor session
+        Generate a log file for this monitoring session.
       </label>
     </div>
 
