@@ -3,6 +3,11 @@
  *
  *  VERSION: 2021.05.03
  *  AUTHORS: Rae Bouldin
+ *  
+ *  DESCRIPTION:
+ *    Keeps track of the run options which are enabled for a program instance. 
+ *    Run options can be set as program arguments when the program is launched,
+ *    or later using the parseOptions method.
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
@@ -23,13 +28,12 @@ public class RunOptions {
 	public boolean ERROR_LOGGING_ENABLED = false;
 	public boolean USER_LOGGING_ENABLED = false;
 	
-//	private String[] args;
-	
 	public RunOptions(String[] args) {
-//		this.args = program_args;
 		parseOptions(args);
 	}
 	
+	/** args should be formatted the same way you would expect in a regular 
+	 *  main method. */
 	public void parseOptions(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-records")) {

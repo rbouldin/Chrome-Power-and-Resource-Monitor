@@ -1,8 +1,13 @@
 /** 
  *  NativeMessage.java
  *
- *  VERSION: 2021.04.29
+ *  VERSION: 2021.05.03
  *  AUTHORS: Rae Bouldin, Zinan Guo
+ *  
+ *  DESCRIPTION:
+ *    Provides methods to send and receive native messages in the correct 
+ *    format. Also includes a method to extract values from a String in the 
+ *    JSON format that Chrome's Native Messaging API uses.
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
@@ -32,15 +37,17 @@ public class NativeMessage {
 	 *  Messaging and translates it into a JSON formatted String.
 	 */
 	public static String read(InputStream in) throws IOException {
+		
+		// Read the size of message.
 		byte[] b = new byte[4];
-		in.read(b); // Read the size of message
-
+		in.read(b);
 		int size = getInt(b);
-
+		
 		if (size == 0) {
 			throw new InterruptedIOException("Blocked communication");
 		}
 
+		// Read the message.
 		b = new byte[size];
 		in.read(b);
 
@@ -48,6 +55,10 @@ public class NativeMessage {
 	}
 	
 	
+	/** 
+	 *  Extract a JSON value from a full JSON formatted string given a key (id)
+	 *  to parse for. 
+	 */
 	public static String getJSONValue(String jsonString, String id) {
 		
 		// Check for invalid input
