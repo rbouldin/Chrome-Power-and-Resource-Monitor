@@ -95,10 +95,12 @@ var monitorLimit;
 var listenNative = function (msg) {
     //suggesiton message
     if (msg.suggestion_msg != null){
+        console.log("suggestion_msg = " + msg.suggestion_msg);
+        // var suggestion_msg = msg.suggestion_msg;
         if(popupConnected) {
-            popupPort.postMessage({type: "suggestion", text:msg.suggestion_msg});
+            popupPort.postMessage({type: "suggestion", text: msg.suggestion_msg});
         }
-        chrome.storage.sync.set({ lastSuggestion: suggestion_msg });
+        chrome.storage.sync.set({ lastSuggestion: msg.suggestion_msg });
         return;
     }
 
@@ -142,8 +144,9 @@ var formatOptions = function (){
     }
 
     if (logOpen){
-        option += " -log"
+        option += " -logForUser"
     }
+    console.log("option = " + option);
     return option;
 }
 
@@ -155,7 +158,7 @@ var connectNative = function () {
 
     nativePort = chrome.runtime.connectNative("com.chrome.monitor");
     nativePort.onMessage.addListener(listenNative);
-    //nativePort.onDisconnect.addListener(function() {console.log("Native Disconnected");});
+    nativePort.onDisconnect.addListener(function() { console.log(chrome.runtime.lastError.message);} );
     nativePort.postMessage({ "message": "connected" });
     nativePort.postMessage({"message":"POST RunOptions","content":formatOptions()});
     userIdFunc(sendPost);
@@ -291,28 +294,19 @@ chrome.storage.sync.get('totalCO2', function (items) {
 });
 
 //fetch user options
-chrome.storage.sync.get('serverOption', function (items) {
-    var serverOp = items.serverOption;
-    if (serverOp) {
-        serverOpen = serverOp;
-    } else {
-        chrome.storage.sync.set({ serverOption: serverOpen });
-    }
+chrome.storage.sync.get('serverEnabled', function (items) {
+    var serverOpen = items.serverEnabled;
+    chrome.storage.sync.set({ serverOption: serverOpen });
 });
 
-chrome.storage.sync.get('logOption', function (items) {
-    var logOp = items.logOption;
-    if (logOp) {
-        logOpen = logOp;
-    } else {
-        chrome.storage.sync.set({ logOption: logOpen });
-    }
+chrome.storage.sync.get('loggingEnabled', function (items) {
+    var logOpen = items.loggingEnabled;
+    chrome.storage.sync.set({ logOption: logOpen });
 });
 
 var updateOptions = function(userServerOption, userLogOption)  {
     serverOpen = userServerOption;
-    logOp = userLogOption;
-
+    logOpen = userLogOption;
     chrome.storage.sync.set({ serverOption: userServerOption });
     chrome.storage.sync.set({ logOption: userLogOption });
 }

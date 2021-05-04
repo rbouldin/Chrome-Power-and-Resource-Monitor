@@ -1,7 +1,7 @@
 /** 
  *  RunOptions.java
  *
- *  VERSION: 2021.04.11
+ *  VERSION: 2021.05.03
  *  AUTHORS: Rae Bouldin
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -21,15 +21,16 @@ public class RunOptions {
 	
 	public boolean LOGGING_ENABLED = false;
 	public boolean ERROR_LOGGING_ENABLED = false;
+	public boolean USER_LOGGING_ENABLED = false;
 	
-	private String[] args;
+//	private String[] args;
 	
-	public RunOptions(String[] program_args) {
-		this.args = program_args;
-		parseOptions();
+	public RunOptions(String[] args) {
+//		this.args = program_args;
+		parseOptions(args);
 	}
 	
-	private void parseOptions() {
+	public void parseOptions(String[] args) {
 		for (int i = 0; i < args.length; i++) {
 			if (args[i].equals("-records")) {
 				if (i+1 < args.length && Character.isDigit(args[i+1].charAt(0))) {
@@ -132,6 +133,9 @@ public class RunOptions {
             }
             else if (args[i].equals("-logServer")) {
             	SERVER_LOGGING_ENABLED = true;
+            }
+            else if (args[i].equals("-logForUser")) {
+            	USER_LOGGING_ENABLED = true;
             }
             else {
 				System.err.println("Unknown parameter at \"" + args[i] + "\".");

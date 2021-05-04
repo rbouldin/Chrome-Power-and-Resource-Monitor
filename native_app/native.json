@@ -4,6 +4,6 @@
     "path" : "run_native.bat",
     "type" : "stdio",
     "allowed_origins": [
-        "chrome-extension://dilgmcnjlgcgkodiifoomnjccgjhdedc/"
+        "chrome-extension://paste_your_extension_ID_here/"
     ]
 }

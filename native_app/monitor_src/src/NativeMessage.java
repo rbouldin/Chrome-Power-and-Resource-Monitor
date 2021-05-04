@@ -84,7 +84,7 @@ public class NativeMessage {
 				// Extract the full JSON element from the jsonString.
 				String elementString = jsonString.substring(beginIndex, endIndex);
 				// Split the element into its "key":value pair
-				String[] elementSplit = elementString.split(":");
+				String[] elementSplit = elementString.split("\":");
 				// something went wrong if the elementSplit size isn't 2
 				if (elementSplit.length == 2) {
 					String value = elementSplit[1];
