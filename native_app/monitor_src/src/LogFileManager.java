@@ -1,8 +1,12 @@
 /** 
- *  LogFileHandler.java
+ *  LogFileManager.java
  *
  *  VERSION: 2021.05.03
  *  AUTHORS: Rae Bouldin
+ *  
+ *  DESCRIPTION:
+ *    The LogFileManager manages each of the five possible log files. It tracks
+ *    which log files are opened and closed, and manages writing to these files.
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
  */
@@ -21,7 +25,6 @@ public class LogFileManager {
 	public final int NATIVE = 2;
 	public final int SERVER = 3;
 	public final int USER = 4;
-//	public final int ALL = 4;
 	
 	private Date date;
 	private String sessionID;
@@ -63,6 +66,8 @@ public class LogFileManager {
 		
 	}
 	
+	/** Turn on full logging so that messages can be written to the full log 
+	 *  file. Note that once logging is turned on, it cannot be turned off. */
 	public void turnOnFullLogging() {
 		this.fullLoggingIsOn = true;
 		if (fullLog == null) {
@@ -70,6 +75,8 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Turn on error logging so that messages can be written to the error log 
+	 *  file. Note that once logging is turned on, it cannot be turned off. */
 	public void turnOnErrorLogging() {
 		this.errorLoggingIsOn = true;
 		if (errorLog == null) {
@@ -77,6 +84,8 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Turn on native logging so that messages can be written to the native 
+	 *  log file. Note that once logging is turned on, it cannot be turned off. */
 	public void turnOnNativeLogging() {
 		this.nativeLoggingIsOn = true;
 		if (nativeLog == null) {
@@ -84,6 +93,8 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Turn on server logging so that messages can be written to the server 
+	 *  log file. Note that once logging is turned on, it cannot be turned off. */
 	public void turnOnServerLogging() {
 		this.serverLoggingIsOn = true;
 		if (serverLog == null) {
@@ -91,6 +102,8 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Turn on user logging so that messages can be written to the user log 
+	 *  file. Note that once logging is turned on, it cannot be turned off. */
 	public void turnOnUserLogging() {
 		this.userLoggingIsOn = true;
 		if (userLog == null) {
@@ -98,6 +111,8 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Try to open all the appropriate LogFiles managed by this LogFileManager
+	 *  and write a header statement for each that is opened. */
 	public void startLogs() {
 		if (fullLoggingIsOn && !fullLog.isOpen) {
 			fullLog.open();
@@ -127,6 +142,8 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Write a formatted header displaying the headerText to the specified 
+	 *  LogFile. */
 	private void writeHeader(LogFile log, String headerText) {
 		if (log != null) {
 			SimpleDateFormat fwDateFormat = new SimpleDateFormat("MM/dd/YYYY");
@@ -141,6 +158,8 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Log a message to a log file by specifying the type 
+	 *  (e.g. DEFAULT, ERROR, NATIVE, SERVER, or USER). */
 	public void log(int type, String message) {
 		String fullMessage = message;
 		switch (type) {
@@ -166,12 +185,16 @@ public class LogFileManager {
 		}
 	}
 	
+	/** Helper method which includes the right checks to perform before trying 
+	 *  to write to a log file. */
 	private void log(boolean logTypeIsOn, LogFile logType, String message) {
 		if (logTypeIsOn && logType != null) {
 			logType.write(message);
 		}
 	}
 	
+	/** Try to close all of the LogFiles managed by this LogFileManager. 
+	 *  Return true if successful; false otherwise. */
 	public boolean closeLogs() {
 		boolean successful = true;
 		Date endDate = Calendar.getInstance().getTime();
@@ -208,13 +231,14 @@ public class LogFileManager {
 	
 	
 	
-	
-	
 	/** 
 	 *  LogFile
 	 *
 	 *  VERSION: 2021.05.03
 	 *  AUTHORS: Rae Bouldin
+	 *  
+	 *  DESCRIPTION:
+	 *    Represents one Log File which can be managed in the LogFileManager.
 	 * 
 	 *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
 	 */
@@ -223,44 +247,24 @@ public class LogFileManager {
 		private FileWriter logFile;
 		private String fileName;
 		private boolean isOpen;
-		private boolean writingIsEnabled;
 		
 		public LogFile(String fileName) {
-			this();
-			this.fileName = fileName;
-		}
-		
-		
-		public LogFile() {
 			this.logFile = null;
-			this.fileName = null;
+			this.fileName = fileName;
 			this.isOpen = false;
-			this.writingIsEnabled = false;
 		}
 		
 		public boolean isOpen() {
 			return this.isOpen;
 		}
 		
-		public boolean writingIsEnabled() {
-			return writingIsEnabled;
-		}
-		
-		public void enableWriting() {
-			writingIsEnabled = true;
-		}
-		
-		public void disableWriting() {
-			writingIsEnabled = false;
-		}
-		
-		
+		/** Try to open the file for this LogFile. Return true if successful 
+		 *  or if the file was already open; false otherwise. */
 		public boolean open() {
 			if ( !this.isOpen ) {
 				try {
 					logFile = new FileWriter(fileName);
 					isOpen = true;
-					writingIsEnabled = true;
 				} catch (IOException e) {
 					System.err.println(e.toString());
 				}
@@ -268,8 +272,10 @@ public class LogFileManager {
 			return isOpen;
 		}
 		
+		/** Try to write to the file for this LogFile. Return true if 
+		 *  successful; false otherwise. */
 		public boolean write(String line) {
-			if ( this.writingIsEnabled && this.isOpen ) {
+			if ( this.isOpen ) {
 				try {
 					logFile.write(line + "\r\n");
 					return true;
@@ -283,12 +289,13 @@ public class LogFileManager {
 			}
 		}
 		
+		/** Try to close the file for this LogFile. Return true if successful 
+		 *  or if the file was already closed; false otherwise. */
 		public boolean close() {
 			if ( this.isOpen ) {
 				try {
 					logFile.close();
 					isOpen = false;
-					writingIsEnabled = false;
 				} catch (IOException e) {
 					System.err.println(e.toString());
 				}
