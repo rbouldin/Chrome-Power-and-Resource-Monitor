@@ -12,6 +12,7 @@
  */
 package src;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -41,6 +42,9 @@ public class LogFileManager {
 	private LogFile serverLog;
 	private LogFile userLog;
 	
+	private File logDirectory;
+	private File developerLogDirectory;
+	
 	public LogFileManager(Date date, String sessionID) throws IOException {
 		this();
 		this.date = date;
@@ -64,6 +68,9 @@ public class LogFileManager {
 		this.serverLog = null;
 		this.userLog = null;
 		
+		this.logDirectory = new File("LOGS/");
+		this.developerLogDirectory = new File("LOGS/dev/");
+		
 	}
 	
 	/** Turn on full logging so that messages can be written to the full log 
@@ -71,7 +78,7 @@ public class LogFileManager {
 	public void turnOnFullLogging() {
 		this.fullLoggingIsOn = true;
 		if (fullLog == null) {
-			fullLog = new LogFile("LOG-" + sessionID + ".txt");
+			fullLog = createLogFile(developerLogDirectory, "LOG-" + sessionID + ".txt");
 		}
 	}
 	
@@ -80,7 +87,7 @@ public class LogFileManager {
 	public void turnOnErrorLogging() {
 		this.errorLoggingIsOn = true;
 		if (errorLog == null) {
-			errorLog = new LogFile("LOG-" + sessionID + "-Errors.txt");
+			errorLog = createLogFile(developerLogDirectory, "LOG-" + sessionID + "-Errors.txt");
 		}
 	}
 	
@@ -89,7 +96,7 @@ public class LogFileManager {
 	public void turnOnNativeLogging() {
 		this.nativeLoggingIsOn = true;
 		if (nativeLog == null) {
-			nativeLog = new LogFile("LOG-" + sessionID + "-Native.txt");
+			nativeLog = createLogFile(developerLogDirectory, "LOG-" + sessionID + "-Native.txt");
 		}
 	}
 	
@@ -98,7 +105,7 @@ public class LogFileManager {
 	public void turnOnServerLogging() {
 		this.serverLoggingIsOn = true;
 		if (serverLog == null) {
-			serverLog = new LogFile("LOG-" + sessionID + "-Server.txt");
+			serverLog = createLogFile(developerLogDirectory, "LOG-" + sessionID + "-Server.txt");
 		}
 	}
 	
@@ -107,8 +114,17 @@ public class LogFileManager {
 	public void turnOnUserLogging() {
 		this.userLoggingIsOn = true;
 		if (userLog == null) {
-			userLog = new LogFile("CHROME_MONITOR_LOG-" + sessionID + ".txt");
+			userLog = createLogFile(logDirectory, "CHROME MONITOR LOG-" + sessionID + ".txt");
 		}
+	}
+	
+	/** Create a LogFile in the specified directory, making sure the directory 
+	 *  exists first and creating it if it doesn't exist. */
+	private LogFile createLogFile(File dir, String fileName) {
+		if (! dir.exists()){
+			dir.mkdirs();
+	    }
+		return new LogFile(dir.getPath() + "/" + fileName);
 	}
 	
 	/** Try to open all the appropriate LogFiles managed by this LogFileManager
