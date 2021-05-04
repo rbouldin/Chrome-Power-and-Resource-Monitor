@@ -284,7 +284,7 @@ var endSession = function () {
 var updateSuggestion = function(suggestionText){
     document.getElementsByClassName("suggestion_cover")[0].style.visibility = "hidden";
     document.getElementsByClassName("suggestion_text")[0].style.visibility = "visible";
-    document.getElementsByClassName("suggestion_text")[0].innerHTML = "Suggestion(Based on last session):<br>" + suggestionText;
+    document.getElementsByClassName("suggestion_text")[0].innerHTML = "<b>Based on the last session:</b><br>" + suggestionText;
 }
 
 //binding events
@@ -368,4 +368,17 @@ document.addEventListener("DOMContentLoaded", function () {
     updateTabCount();
     updateCarbonFootprint();
     fetchSuggestion();
+
+    chrome.storage.sync.get(['serverEnabled', 'loggingEnabled'], function(result) {
+        if (result.serverEnabled) {
+            document.getElementById('serverCheckbox').checked = true;
+        } else {
+            document.getElementById('serverCheckbox').checked = false;
+        }
+        if (result.loggingEnabled) {
+            document.getElementById('loggingCheckbox').checked = true;
+        } else {
+            document.getElementById('loggingCheckbox').checked = false;
+        }
+    });
 });
