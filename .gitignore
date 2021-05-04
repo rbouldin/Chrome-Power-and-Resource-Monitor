@@ -2,6 +2,8 @@
 **/LOG-*.txt
 
 # SPECIFIC DIRECTORIES:
+native_app/**/LOGS
+native_app/**/LOGS/dev
 native_app/**/powershell_scripts
 
 # FILE TYPES:
