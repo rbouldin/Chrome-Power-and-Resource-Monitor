@@ -1,7 +1,7 @@
 /** 
  *  LogFileHandler.java
  *
- *  VERSION: 2021.04.29
+ *  VERSION: 2021.05.03
  *  AUTHORS: Rae Bouldin
  * 
  *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
@@ -14,39 +14,37 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class LogFileHandler {
+public class LogFileManager {
 	
 	public final int DEFAULT = 0;
 	public final int ERROR = 1;
 	public final int NATIVE = 2;
 	public final int SERVER = 3;
-	public final int ALL = 4;
+	public final int USER = 4;
+//	public final int ALL = 4;
 	
 	private Date date;
 	private String sessionID;
-	
-	private final String FILE_PREFIX = "LOG";
-	private final String ERROR_FILENAME  = "Errors";
-	private final String NATIVE_FILENAME = "NativeMessaging";
-	private final String SERVER_FILENAME = "Server";
 	
 	private boolean fullLoggingIsOn;
 	private boolean errorLoggingIsOn;
 	private boolean nativeLoggingIsOn;
 	private boolean serverLoggingIsOn;
+	private boolean userLoggingIsOn;
 	
-	private FileWriter fullLog;
-	private FileWriter errorLog;
-	private FileWriter nativeLog;
-	private FileWriter serverLog;
+	private LogFile fullLog;
+	private LogFile errorLog;
+	private LogFile nativeLog;
+	private LogFile serverLog;
+	private LogFile userLog;
 	
-	public LogFileHandler(Date date, String sessionID) throws IOException {
+	public LogFileManager(Date date, String sessionID) throws IOException {
 		this();
 		this.date = date;
 		this.sessionID = sessionID.replaceAll("\"", "");
 	}
 	
-	public LogFileHandler() throws IOException {
+	public LogFileManager() throws IOException {
 		
 		this.date = Calendar.getInstance().getTime();
 		this.sessionID = null;
@@ -55,86 +53,122 @@ public class LogFileHandler {
 		this.errorLoggingIsOn = false;
 		this.nativeLoggingIsOn = false;
 		this.serverLoggingIsOn = false;
+		this.userLoggingIsOn = false;
 		
 		this.fullLog = null;
 		this.errorLog = null;
 		this.nativeLog = null;
 		this.serverLog = null;
+		this.userLog = null;
 		
 	}
 	
-	public void setFullLogging(boolean on_off) {
-		this.fullLoggingIsOn = on_off;
+	public void turnOnFullLogging() {
+		this.fullLoggingIsOn = true;
+		if (fullLog == null) {
+			fullLog = new LogFile("LOG-" + sessionID + ".txt");
+		}
 	}
 	
-	public void setErrorLogging(boolean on_off) {
-		this.errorLoggingIsOn = on_off;
+	public void turnOnErrorLogging() {
+		this.errorLoggingIsOn = true;
+		if (errorLog == null) {
+			errorLog = new LogFile("LOG-" + sessionID + "-Errors.txt");
+		}
 	}
 	
-	public void setNativeLogging(boolean on_off) {
-		this.nativeLoggingIsOn = on_off;
+	public void turnOnNativeLogging() {
+		this.nativeLoggingIsOn = true;
+		if (nativeLog == null) {
+			nativeLog = new LogFile("LOG-" + sessionID + "-Native.txt");
+		}
 	}
 	
-	public void setServerLogging(boolean on_off) {
-		this.serverLoggingIsOn = on_off;
+	public void turnOnServerLogging() {
+		this.serverLoggingIsOn = true;
+		if (serverLog == null) {
+			serverLog = new LogFile("LOG-" + sessionID + "-Server.txt");
+		}
+	}
+	
+	public void turnOnUserLogging() {
+		this.userLoggingIsOn = true;
+		if (userLog == null) {
+			userLog = new LogFile("CHROME_MONITOR_LOG-" + sessionID + ".txt");
+		}
 	}
 	
 	public void startLogs() {
-		if (fullLoggingIsOn) { 
-			String fileName = FILE_PREFIX + "-" + sessionID + ".txt";
-			fullLog = startLog(fileName, "CHROME MONITOR LOG");
+		if (fullLoggingIsOn && !fullLog.isOpen) {
+			fullLog.open();
+			writeHeader(fullLog, "CHROME MONITOR LOG");
 		}
-		if (errorLoggingIsOn) { 
-			errorLog = startLog(formatFileName(ERROR_FILENAME), "ERROR LOG");
+		if (errorLoggingIsOn && !errorLog.isOpen) {
+			errorLog.open();
+			writeHeader(errorLog, "ERROR LOG");
 		}
-		if (nativeLoggingIsOn) { 
-			nativeLog = startLog(formatFileName(NATIVE_FILENAME), "NATIVE MESSAGE LOG");
+		if (nativeLoggingIsOn && !nativeLog.isOpen()) {
+			nativeLog.open();
+			writeHeader(nativeLog, "NATIVE MESSAGE LOG");
 		}
-		if (serverLoggingIsOn) { 
-			serverLog = startLog(formatFileName(SERVER_FILENAME), "SERVER MESSAGE LOG");
+		if (serverLoggingIsOn && !serverLog.isOpen()) {
+			serverLog.open();
+			writeHeader(serverLog, "SERVER MESSAGE LOG");
+		}
+		if (userLoggingIsOn && !userLog.isOpen()) {
+			userLog.open();
+			writeHeader(userLog, "CHROME MONITOR LOG");
+			log(userLoggingIsOn, userLog, "");
+			log(userLoggingIsOn, userLog, " ------------------------------------------------    ------------------------------------------------ ");
+			log(userLoggingIsOn, userLog, "                      CHROME                                              SYSTEM                      ");
+			log(userLoggingIsOn, userLog, " ------------------------------------------------    ------------------------------------------------ ");
+			log(userLoggingIsOn, userLog, String.format("  %10s  %10s  %10s  %10s      %10s  %10s  %10s  %10s  ", "CPU", "CPU", "GPU", "Memory", "CPU", "CPU", "GPU", "Memory"));
+			log(userLoggingIsOn, userLog, String.format("  %10s  %10s  %10s  %10s      %10s  %10s  %10s  %10s  ", "Power", "Usage", "Usage", "Usage", "Power", "Usage", "Usage", "Usage"));
+		}
+	}
+	
+	private void writeHeader(LogFile log, String headerText) {
+		if (log != null) {
+			SimpleDateFormat fwDateFormat = new SimpleDateFormat("MM/dd/YYYY");
+	        SimpleDateFormat fwTimeFormat = new SimpleDateFormat("hh:mma z");
+			String title = String.format(
+					" %s   (%s  %s)", 
+					headerText, fwDateFormat.format(this.date), fwTimeFormat.format(this.date));
+	        
+			log.write("================================================");
+			log.write(title);
+			log.write("================================================");
 		}
 	}
 	
 	public void log(int type, String message) {
+		String fullMessage = message;
 		switch (type) {
-			case ERROR: logError(message);
+			case ERROR: 
+				log(errorLoggingIsOn, errorLog, message);
 				break;
-			case NATIVE: logNativeMessage(message);
+			case NATIVE: 
+				fullMessage = " NATIVE " + message;
+				log(nativeLoggingIsOn, nativeLog, fullMessage);
 				break;
-			case SERVER: logServerMessage(message);
+			case SERVER: 
+				fullMessage = " SERVER " + message;
+				log(serverLoggingIsOn, serverLog, fullMessage);
+				break;
+			case USER:
+				log(userLoggingIsOn, userLog, fullMessage);
 				break;
 			default:
 				break;
 		}
-		if (type == DEFAULT && fullLoggingIsOn) {
-			writeToLog(fullLog, message);
+		if (type != USER) {
+			log(fullLoggingIsOn, fullLog, fullMessage);
 		}
 	}
 	
-	public void logError(String message) {
-		if (fullLoggingIsOn) { 
-			writeToLog(fullLog, message); 
-		}
-		if (errorLoggingIsOn) { 
-			writeToLog(errorLog, message); 
-		}
-	}
-	
-	public void logNativeMessage(String message) {
-		if (fullLoggingIsOn) { 
-			writeToLog(fullLog, " NATIVE " + message); 
-		}
-		if (nativeLoggingIsOn) { 
-			writeToLog(nativeLog, message); 
-		}
-	}
-	
-	public void logServerMessage(String message) {
-		if (fullLoggingIsOn) { 
-			writeToLog(fullLog, " SERVER " + message); 
-		}
-		if (serverLoggingIsOn) { 
-			writeToLog(serverLog, message); 
+	private void log(boolean logTypeIsOn, LogFile logType, String message) {
+		if (logTypeIsOn && logType != null) {
+			logType.write(message);
 		}
 	}
 	
@@ -144,71 +178,126 @@ public class LogFileHandler {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/YYYY");
         SimpleDateFormat timeFormat = new SimpleDateFormat("hh:mma z");
 		String closeMessage = String.format("Logging ended %s %s\n", dateFormat.format(endDate), timeFormat.format(endDate));
-		if (fullLoggingIsOn) {
-			writeToLog(fullLog, "");
-			writeToLog(fullLog, closeMessage);
-			successful = closeLog(fullLog) && successful;
+		if (fullLog != null && fullLog.isOpen()) {
+			fullLog.write("");
+			fullLog.write(closeMessage);
+			successful = fullLog.close() && successful;
 		}
-		if (errorLoggingIsOn) { 
-			writeToLog(errorLog, "");
-			writeToLog(errorLog, closeMessage);
-			successful = closeLog(errorLog) && successful;
+		if (errorLog != null && errorLog.isOpen()) { 
+			errorLog.write("");
+			errorLog.write(closeMessage);
+			successful = errorLog.close() && successful;
 		}
-		if (nativeLoggingIsOn) { 
-			writeToLog(nativeLog, "");
-			writeToLog(nativeLog, closeMessage);
-			successful = closeLog(nativeLog) && successful;
+		if (nativeLog != null && nativeLog.isOpen()) { 
+			nativeLog.write("");
+			nativeLog.write(closeMessage);
+			successful = nativeLog.close() && successful;
 		}
-		if (serverLoggingIsOn) { 
-			writeToLog(serverLog, "");
-			writeToLog(serverLog, closeMessage);
-			successful = closeLog(serverLog) && successful;
+		if (serverLog != null && serverLog.isOpen()) { 
+			serverLog.write("");
+			serverLog.write(closeMessage);
+			successful = serverLog.close() && successful;
+		}
+		if (userLog != null && userLog.isOpen()) { 
+			userLog.write("");
+			userLog.write(closeMessage);
+			successful = userLog.close() && successful;
 		}
 		return successful;
 	}
 	
-	private String formatFileName(String logName) {
-		return FILE_PREFIX + "-" + sessionID + "-" + logName + ".txt";
-	}
 	
-	private FileWriter startLog(String fileName, String logTitle) {
-		SimpleDateFormat fwDateFormat = new SimpleDateFormat("MM/dd/YYYY");
-        SimpleDateFormat fwTimeFormat = new SimpleDateFormat("hh:mma z");
-		String title = String.format(
-				" %s   (%s  %s)\n", 
-				logTitle, fwDateFormat.format(date), fwTimeFormat.format(date));
-        
-		try {
-			FileWriter fw = new FileWriter(fileName);
-			fw.write("================================================\n");
-			fw.write(title);
-			fw.write("================================================\n");
-			return fw;
-		} catch (IOException e) {
-			System.err.println(e.toString());
-			return null;
+	
+	
+	
+	/** 
+	 *  LogFile
+	 *
+	 *  VERSION: 2021.05.03
+	 *  AUTHORS: Rae Bouldin
+	 * 
+	 *  Written for Dr. Cameron's Systems & Networking Capstone at Virginia Tech.
+	 */
+	private class LogFile {
+		
+		private FileWriter logFile;
+		private String fileName;
+		private boolean isOpen;
+		private boolean writingIsEnabled;
+		
+		public LogFile(String fileName) {
+			this();
+			this.fileName = fileName;
+		}
+		
+		
+		public LogFile() {
+			this.logFile = null;
+			this.fileName = null;
+			this.isOpen = false;
+			this.writingIsEnabled = false;
+		}
+		
+		public boolean isOpen() {
+			return this.isOpen;
+		}
+		
+		public boolean writingIsEnabled() {
+			return writingIsEnabled;
+		}
+		
+		public void enableWriting() {
+			writingIsEnabled = true;
+		}
+		
+		public void disableWriting() {
+			writingIsEnabled = false;
+		}
+		
+		
+		public boolean open() {
+			if ( !this.isOpen ) {
+				try {
+					logFile = new FileWriter(fileName);
+					isOpen = true;
+					writingIsEnabled = true;
+				} catch (IOException e) {
+					System.err.println(e.toString());
+				}
+			}
+			return isOpen;
+		}
+		
+		public boolean write(String line) {
+			if ( this.writingIsEnabled && this.isOpen ) {
+				try {
+					logFile.write(line + "\r\n");
+					return true;
+				} catch (IOException e) {
+					System.err.println(e.toString());
+					return false;
+				}
+			} 
+			else {
+				return false;
+			}
+		}
+		
+		public boolean close() {
+			if ( this.isOpen ) {
+				try {
+					logFile.close();
+					isOpen = false;
+					writingIsEnabled = false;
+				} catch (IOException e) {
+					System.err.println(e.toString());
+				}
+			}
+			return !isOpen;
 		}
 		
 	}
-	
-	private boolean writeToLog(FileWriter fw, String message) {
-		try {
-			fw.write(message + "\r\n");
-			return true;
-		} catch (IOException e) {
-			System.err.println(e.toString());
-			return false;
-		}
-	}
-	
-	private boolean closeLog(FileWriter fw) {
-		try {
-			fw.close();
-			return true;
-		} catch (IOException e) {
-			System.err.println(e.toString());
-			return false;
-		}
-	}
 
+	
+	
 }
