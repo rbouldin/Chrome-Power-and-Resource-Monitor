@@ -12,17 +12,6 @@
 
 document.addEventListener('DOMContentLoaded', async function() {
 
-  // Set user info on the UI
-  // chrome.storage.sync.get(['userName'], function(result) {
-  //   const name = result.userName;
-  //   if (name) {
-  //     document.getElementById('userInfo').innerHTML = "You are logged in as " + name + ".";
-  //   }
-  //   else {
-  //     document.getElementById('userInfo').innerHTML = "You not logged in.";
-  //   }
-  // });
-
   // Set suggestions enabled on the UI
   chrome.storage.sync.get(['suggestion_checkMemLeak', 
                             'suggestion_clearBrowsingData', 
@@ -116,20 +105,6 @@ document.addEventListener('DOMContentLoaded', async function() {
 // ------------------------------------------------------------------------- //
 
 function saveOptions() {
-  // Save user info options
-  // retrieve from html element by id (userName)
-  // const newUserName = document.getElementById('userNameInput').value;
-  // if (newUserName) {
-  //   // Check if the name is already taken on the server.
-  //   var nameTaken = userExists(newUserName);
-  //   console.log("nameTaken = " + nameTaken);
-  //   if (!nameTaken) {
-  //     // Save the value using the Chrome extension storage API.
-  //     chrome.storage.sync.set({ userName: newUserName }, function () {
-  //       console.log("newUserName = " + newUserName);
-  //     });
-  //   }
-  // }
 
   // Save enabled suggestions
   const checkMemLeakChecked = document.getElementById('checkMemLeak').checked;
@@ -192,70 +167,4 @@ function saveOptions() {
   window.location.reload(true);
   alert('Options saved!');
 }
-// ------------------------------------------------------------------------- //
-
-
-
-// ------------------------------------------------------------------------- //
-//                              NATIVE MESSAGING                             //
-// ------------------------------------------------------------------------- //
-// var port;
-// var connected = false;
-// var lastMessage = "no data";
-
-// var userExists = function(name) {
-//   var exists = true;
-//   var hostName = "com.chrome.monitor";
-//   var getMsg = {"message": "GET user exists", "user": "" + name};
-//   var exitMsg = {"message": "EXIT NATIVE"};
-
-//   if (!connected) {
-//     connectNative();
-//   }
-//   if (connected) {
-//     sendNativeMessage(getMsg);
-//     console.log("lastMessage = " + lastMessage);
-//     if (lastMessage.includes("no data")) {
-//       console.log("Something went wrong communicating with the native messaging host.");
-//     } 
-//     else if (lastMessage.includes("err")) {
-//       console.log("Couldn't connect to server.");
-//       alert("Error connecting to the server. Your username couldn't be updated.");
-//     }
-//     else {
-//       console.log("Bingo!");
-//       // exists = (lastMessage.includes('true');
-//     }
-//     sendNativeMessage(exitMsg);
-//   } else {
-//     console.log("Couldn't connect to native.");
-//     alert("Error connecting to the native host. Your username couldn't be updated.");
-//   }
-//   return exists;
-// }
-
-// var sendNativeMessage = function(message) {
-//   port.postMessage(message);
-//   console.log("NATIVE  <==  " + JSON.stringify(message));
-// }
-
-// var onNativeMessage = function(message) {
-//   console.log("NATIVE  ==>  " + JSON.stringify(message));
-//   lastMessage = JSON.stringify(message);
-//   console.log("lastMessage = " + lastMessage);
-// }
-
-// var onNativeDisconnect = function() {
-//   connected = false;
-//   console.log(chrome.runtime.lastError.message);
-// }
-
-// var connectNative = function() {
-//   var hostName = "com.chrome.monitor";
-//   console.log("Connecting to native messaging host: " + hostName);
-//   port = chrome.runtime.connectNative(hostName);
-//   connected = true;
-//   port.onMessage.addListener(onNativeMessage);
-//   port.onDisconnect.addListener(onNativeDisconnect);
-// }
 // ------------------------------------------------------------------------- //
