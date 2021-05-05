@@ -102,7 +102,15 @@ public class Main {
 					NativeMessage.send(nativeErr);
 						fileManager.log(fileManager.NATIVE, " <==  " + nativeErr);
 				} else {
-					String ohmStarted = "{\"OpenHardwareMonitor\":\"ON\"}";
+					double maxCpuPower = monitor.getMaxCpuPower();
+					// Give Open Hardware Monitor time to fully start up if it needs to
+					// (e.g. if it has recently been launched).
+					int numAttempts = 0;
+					while (maxCpuPower == 0 && numAttempts < 200) {
+						maxCpuPower = monitor.getMaxCpuPower();
+						numAttempts++;
+					}
+					String ohmStarted = "{\"OpenHardwareMonitor\":\"ON\"," + "\"max_cpu_power\":\"" + String.format("%.4f", maxCpuPower) + "\"}";
 					NativeMessage.send(ohmStarted);
 						fileManager.log(fileManager.NATIVE, " <==  " + ohmStarted);
 				}
@@ -176,16 +184,6 @@ public class Main {
 				
 			}
 			
-		} 
-//		// If Native Message input is DISABLED, the program will run monitoring until a specified 
-//		// number of records are logged.
-		else {
-			String data = "{\"message\":\"POST user\",\"user_id\":\"test\",\"suggestions\":[],\"tabs\":\"1\"}";
-			parseUserData(data);
-			for (int r = 0; r < options.NUM_RECORDS; r++) {
-				getMonitorData();
-			}
-			getSuggestionsFromServer();
 		}
 		
 		// Close the log file FileWriters before exiting.
@@ -268,7 +266,7 @@ public class Main {
 			// Give Open Hardware Monitor time to fully start up if it needs to
 			// (e.g. if it has recently been launched).
 			int numAttempts = 0;
-			while (maxCpuPower == 0 && numAttempts < 100) {
+			while (maxCpuPower == 0 && numAttempts < 300) {
 				maxCpuPower = monitor.getMaxCpuPower();
 				numAttempts++;
 			}
@@ -310,6 +308,18 @@ public class Main {
 			// Try to give Open Hardware Monitor enough time to fully start 
 			// before the next command is read.
 			TimeUnit.SECONDS.sleep(4);
+			
+			if (ohmStarted.contains("ON")) {
+				double maxCpuPower = monitor.getMaxCpuPower();
+				// Give Open Hardware Monitor time to fully start up if it needs to
+				// (e.g. if it has recently been launched).
+				int numAttempts = 0;
+				while (maxCpuPower == 0 && numAttempts < 200) {
+					maxCpuPower = monitor.getMaxCpuPower();
+					numAttempts++;
+				}
+				ohmStarted = "{\"OpenHardwareMonitor\":\"ON\"," + "\"max_cpu_power\":\"" + String.format("%.4f", maxCpuPower) + "\"}";
+			}
 			
 			// Alert the extension that Open Hardware Monitor has been started
 			NativeMessage.send(ohmStarted);
@@ -357,7 +367,7 @@ public class Main {
 		if ( options.OPEN_HARDWARE_MONITOR_DETECTED && Double.isNaN(newRecord.getSystemCpuPower()) ) {
 			int numAttempts = 0;
 			while ( Double.isNaN(newRecord.getSystemCpuPower()) 
-					&& numAttempts < 100 ) {
+					&& numAttempts < 200 ) {
 				newRecord = monitor.getData();
 				numAttempts++;
 			}
