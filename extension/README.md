@@ -1,13 +1,8 @@
 # Chrome Extension README
-## Current Functionality
-### Summary:
-This extension displays the resource usage by chrome when you are using chrome. It get its data
-from the native app and display the live data along with the other statics, including the number
-of tabs user opened and the total carbon footprint by chrome (estimated).
+## Summary
+This extension displays the Chrome web browser's power and resource usage. It gets system and monitoring data from the native app and displays live data along with other statistics, including the number of tabs open and the total carbon footprint by Chrome (estimated).
 
-### How to use the extension
-1. Make sure have already set up the native app [Native app](https://github.com/rbouldin/Chrome-Power-and-Resource-Monitor/tree/main/native_app).
-2. Run the Open Hardware Monitor [Open Hardware Monitor](https://openhardwaremonitor.org/).
-3. In google chrome open more tools -> extension. Click on the "Load unpacked" to load this folder "entension/"
-4. Copy the ID of loaded extension to the file native_app/native.json to replace the id in the "allowed_origins" field.
-5. You can now Click on the extension to see your chrome resource usage. (You can pin the extension to make it easier to find).
+## Setting up the Extension
+1. In Google Chrome, open Toolbar Settings -> More Tools -> Extension. Enable Developer Mode, and click on "Load unpacked" to load the extension from this directory (../Chrome-Power-and-Resource-Monitor/extension/) on your local machine.
+2. Copy the ID of your loaded extension and go read the Setup steps in [native_app/README.md](https://github.com/rbouldin/Chrome-Power-and-Resource-Monitor/tree/main/native_app) to enable native messaging for your extension.
+3. You can now start the extension to see your Chrome resource usage. Pin the extension to the toolbar to make it easier to find.
