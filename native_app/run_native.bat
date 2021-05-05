@@ -3,7 +3,7 @@
 @echo off
 tasklist /FI "IMAGENAME eq OpenHardwareMonitor.exe" 2>NUL | find /I /N "OpenHardwareMonitor.exe">NUL
 if NOT "%ERRORLEVEL%"=="0" (
-    java -jar "monitor.jar" -OHM off -log %*
+    java -jar "monitor.jar" -OHM off %*
 ) else (
-    java -jar "monitor.jar" -OHM on -log %*
+    java -jar "monitor.jar" -OHM on %*
 )
