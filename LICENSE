@@ -1,53 +1,186 @@
-MIT License
+===============================================================================  
+ Chrome-Power-and-Resource-Monitor LICENSE  
+===============================================================================  
+ Copyright (c) 2021 Rae Bouldin, Zinan Guo, Robbie Andrews III
 
-Copyright (c) 2021 Rae Bouldin, Zinan Guo, Robbie Andrews III
+===============================================================================  
+ bttn.css LICENSE  
+===============================================================================  
+ MIT License
+ 
+ Copyright (c) 2016 Ganapati V S
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.  
+-
 
-###################################
-Open Source Projects we used in this project:
+===============================================================================  
+ Django LICENSE  
+===============================================================================  
+ Copyright (c) Django Software Foundation and individual contributors.
+ All rights reserved.
 
-#Native app
-java native access (jna) https://github.com/java-native-access/jna
-License: Apache-2.0 OR LGPL-2.1
+ Redistribution and use in source and binary forms, with or without modification,
+ are permitted provided that the following conditions are met:
 
-Operating System Hardware Information (oshi) https://github.com/oshi/oshi
-License: MIT License
+    1. Redistributions of source code must retain the above copyright notice,
+       this list of conditions and the following disclaimer.
 
-Simple Logging Facade for Java (SLF4J) http://www.slf4j.org/
-License: MIT License
+    2. Redistributions in binary form must reproduce the above copyright
+       notice, this list of conditions and the following disclaimer in the
+       documentation and/or other materials provided with the distribution.
 
-#Extension
-bttn.css https://github.com/ganapativs/bttn.css
-License: MIT License
+    3. Neither the name of Django nor the names of its contributors may be used
+       to endorse or promote products derived from this software without
+       specific prior written permission.
 
-Google Chart https://developers.google.com/chart/terms
-License: CC4.0
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.  
+-
 
-Google Icons https://google.github.io/material-design-icons/
-License: Apache License 2.0
+===============================================================================  
+ Google Charts LICENSE  
+===============================================================================  
+ Licensed under the Creative Commons Attribution 4.0 License, and code samples 
+ are licensed under the Apache 2.0 License. For details, see the Google 
+ Developers Site Policies. Java is a registered trademark of Oracle and/or its 
+ affiliates.
 
-Icon for the extension made by Vectors Market from https://www.flaticon.com/"
+ The Apache 2.0 License can be found at  
+ https://www.apache.org/licenses/LICENSE-2.0  
 
-#Backend Server
-django https://www.djangoproject.com/trademarks/
-License: CC3.0
+ The Creative Commons Attribution 4.0 License can be found at  
+ https://creativecommons.org/licenses/by/4.0/legalcode  
+-
 
-sqlite https://www.sqlite.org/copyright.html
-License: Public Domain
+===============================================================================  
+ Google Icons LICENSE  
+===============================================================================  
+ We have made these icons available for you to incorporate them into your 
+ products under the Apache License Version 2.0. Feel free to remix and re-share 
+ these icons and documentation in your products. We'd love attribution in your 
+ app's about screen, but it's not required. The only thing we ask is that you 
+ not re-sell the icons themselves.
+
+ The Apache 2.0 License can be found at  
+ https://www.apache.org/licenses/LICENSE-2.0  
+-
+
+===============================================================================  
+ Java Native Access (JNA) LICENSE  
+===============================================================================  
+ SPDX-License-Identifier: Apache-2.0 OR LGPL-2.1
+
+ Java Native Access (JNA) is licensed under the LGPL, version 2.1
+ or later, or (from version 4.0 onward) the Apache License,
+ version 2.0.
+
+ You can freely decide which license you want to apply to the project.
+
+ You may obtain a copy of the LGPL License at:  
+ http://www.gnu.org/licenses/licenses.html
+
+ A copy is also included in the downloadable source code package
+ containing JNA, in file "LGPL2.1", under the same directory
+ as this file.
+
+ You may obtain a copy of the Apache License at:  
+ http://www.apache.org/licenses/
+
+ A copy is also included in the downloadable source code package
+ containing JNA, in file "AL2.0", under the same directory
+ as this file.
+
+ Commercial support may be available, please e-mail
+ twall[at]users[dot]sf[dot]net.  
+-
+
+===============================================================================  
+ Operating System and Hardware Information (OSHI) LICENSE  
+===============================================================================  
+ MIT License
+
+ Copyright (c) 2010 - 2021 The OSHI Project Contributors: 
+ https://github.com/oshi/oshi/graphs/contributors
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in all
+ copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.  
+-
+
+===============================================================================  
+ Simple Logging Facade for Java (SLF4J) LICENSE  
+===============================================================================  
+ Copyright (c) 2004-2017 QOS.ch
+ All rights reserved.
+
+ Permission is hereby granted, free  of charge, to any person obtaining
+ a  copy  of this  software  and  associated  documentation files  (the
+ "Software"), to  deal in  the Software without  restriction, including
+ without limitation  the rights to  use, copy, modify,  merge, publish,
+ distribute,  sublicense, and/or sell  copies of  the Software,  and to
+ permit persons to whom the Software  is furnished to do so, subject to
+ the following conditions:
+ 
+ The  above  copyright  notice  and  this permission  notice  shall  be
+ included in all copies or substantial portions of the Software.
+ 
+ THE  SOFTWARE IS  PROVIDED  "AS  IS", WITHOUT  WARRANTY  OF ANY  KIND,
+ EXPRESS OR  IMPLIED, INCLUDING  BUT NOT LIMITED  TO THE  WARRANTIES OF
+ MERCHANTABILITY,    FITNESS    FOR    A   PARTICULAR    PURPOSE    AND
+ NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+ LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+ OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
+ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.  
+-
+
+===============================================================================  
+ SQLLite LICENSE  
+===============================================================================  
+ The author disclaims copyright to this source code.  In place of
+ a legal notice, here is a blessing:
+
+  *   May you do good and not evil.
+  *   May you find forgiveness for yourself and forgive others.
+  *   May you share freely, never taking more than you give.
+
+ The full SQLLite License/Copyright notice can be found at: 
+ https://www.sqlite.org/copyright.html  
+ -
