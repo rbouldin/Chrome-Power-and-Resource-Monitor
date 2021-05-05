@@ -25,9 +25,10 @@
     <div id="details">
       <div class="row">
         <div class="double-column">
-          <h4 class="detail_info power_info" id="curr_power">Current power usage: N/A W
+          <h4 class="detail_info power_info" id="curr_power">Current power usage: N/A W  
             <i class='help_icon tooltip'>
               <span class="tooltiptext tooltip-bottom">
+                This is the current power usage for this single point in the monitoring session.<br><br>
                 How do we calculate the power usage? <br>
                 We estimate Chrome's power usage (P) based on two pieces of data from your computer:
                 the maximum cpu power (C) and the current cpu usage (X).
@@ -41,8 +42,13 @@
               </span>
             </i>
           </h4>
-          <h4 class="detail_info power_info" id="total_power">Total power usage: N/A Wh</h4>
-
+          <h4 class="detail_info power_info" id="total_power">Session power usage: N/A Wh 
+            <i class='help_icon tooltip'>
+              <span class="tooltiptext tooltip-bottom">
+                The is the total power usage for the entire monitoring session.
+              </span>
+            </i>
+          </h4>
         </div>
         <div class="column">
           <div class="right_column">

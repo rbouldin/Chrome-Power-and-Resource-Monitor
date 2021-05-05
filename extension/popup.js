@@ -181,8 +181,8 @@ var clearChart = function () {
     chart.draw(data, options);
 
     var powerDisplay = document.getElementById("curr_power").childNodes[0];
-    powerDisplay.nodeValue = "Current power usage: 0.00 W";
-    document.getElementById("total_power").innerText = "Total power usage: 0.00 Wh";
+    powerDisplay.nodeValue = "Current power usage: 0.00 W  ";
+    document.getElementById("total_power").innerText = "Session power usage: 0.00 Wh ";
     document.getElementById("cpu_info").innerText = "CPU: 00.00%";
     document.getElementById("gpu_info").innerText = "GPU: 00.00%";
     document.getElementById("mem_info").innerText = "MEM: 00.00%";
@@ -206,8 +206,10 @@ var loadFromBg = function () {
         chart.draw(data, options);
     });
     var powerDisplay = document.getElementById("curr_power").childNodes[0];
-    powerDisplay.nodeValue = "Current power usage: 0.00 W";
-    document.getElementById("total_power").innerText = "Total power usage: " + bg.sessionPower.toFixed(2) + " Wh";
+    powerDisplay.nodeValue = "Current power usage: 0.00 W  ";
+    var totalPowerDisplay = document.getElementById("total_power").childNodes[0];
+    totalPowerDisplay.nodeValue = "Session power usage: " + bg.sessionPower.toFixed(2) + " Wh ";
+    // document.getElementById("total_power").innerText = "Session power usage: " + bg.sessionPower.toFixed(2) + " Wh ";
 
     monitorStartTime = bg.monitorStartTime;
     monitorTimeLimit = bg.monitorLimit;
@@ -239,17 +241,33 @@ var receiveData = function (cpu, gpu, mem, currPower, sessionPower) {
     if (!monitorStarted) {
         return;
     }
+    if (bg.runWithOhm && !bg.ohmRunning) {
+        return;
+    }
+    if (cpu == null && gpu == null && mem == null) {
+        return;
+    }
 
-    document.getElementById("cpu_info").innerText = "CPU: " + cpu.toFixed(2) + "%";
-    document.getElementById("mem_info").innerText = "MEM: " + mem.toFixed(2) + "%";
+    if (cpu != null) {
+        document.getElementById("cpu_info").innerText = "CPU: " + cpu.toFixed(2) + "%";
+    }
+    if (mem != null) {
+        document.getElementById("mem_info").innerText = "MEM: " + mem.toFixed(2) + "%";
+    }
     if (gpu != null) {
         //in case open hardware monitor is not opened
         document.getElementById("gpu_info").innerText = "GPU: " + gpu.toFixed(2) + "%";
     }
 
-    var powerDisplay = document.getElementById("curr_power").childNodes[0];
-    powerDisplay.nodeValue = "Current power usage: " + currPower.toFixed(2) + " W";
-    document.getElementById("total_power").innerText = "Total power usage: " + sessionPower.toFixed(2) + " Wh"
+    if (currPower != null) {
+        var powerDisplay = document.getElementById("curr_power").childNodes[0];
+        powerDisplay.nodeValue = "Current power usage: " + currPower.toFixed(2) + " W  ";
+    }
+    if (sessionPower != null) {
+        var totalPowerDisplay = document.getElementById("total_power").childNodes[0];
+        totalPowerDisplay.nodeValue = "Session power usage: " + bg.sessionPower.toFixed(2) + " Wh ";
+    }
+    // document.getElementById("total_power").innerText = "Session power usage: " + sessionPower.toFixed(2) + " Wh"
     updateData(cpu, gpu, mem);
 }
 

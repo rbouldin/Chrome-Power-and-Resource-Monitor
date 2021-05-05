@@ -91,11 +91,44 @@ var sendPost = function (userId) {
     nativePort.postMessage({ "message": "GET sysInfo" });
 }
 
+var ohmRunning = false;
+var runWithOhm = true;
 var monitorLimit;
 var listenNative = function (msg) {
+
+    //error message
+    if (msg.error != null) {
+        const error = msg.error;
+        console.log("WARNING " + error);
+        if (error.includes("OpenHardwareMonitor")) {
+            ohmRunning = false;
+            if (confirm("WARNING: It doesn't look like Open Hardware Monitor is running. \nWould you like to start Open Hardware Monitor?")) {
+                nativePort.postMessage({"message":"Start OpenHardwareMonitor"});
+                runWithOHM = true;
+              } else {
+                runWithOHM = false;
+              }
+        }
+        return;
+    }
+    // ohm message
+    if (msg.OpenHardwareMonitor != null) {
+        const OpenHardwareMonitor = msg.OpenHardwareMonitor;
+        if (OpenHardwareMonitor.includes("ON")) {
+            ohmRunning = true;
+            if (cpuPackage == 0){
+                var maxCpu = parseFloat(msg.max_cpu_power);
+                if (!Number.isNaN(maxCpu)){
+                    cpuPackage = maxCpu;
+                }
+            }
+        } else {
+            ohmRunning = false;
+        }
+        return;
+    }
     //suggesiton message
     if (msg.suggestion_msg != null){
-        console.log("suggestion_msg = " + msg.suggestion_msg);
         // var suggestion_msg = msg.suggestion_msg;
         if(popupConnected) {
             popupPort.postMessage({type: "suggestion", text: msg.suggestion_msg});
@@ -106,7 +139,7 @@ var listenNative = function (msg) {
 
     //sysInfo message
     var maxCpu = parseFloat(msg.max_cpu_power);
-    if (!Number.isNaN(maxCpu)){
+    if (!Number.isNaN(maxCpu) && cpuPackage == 0){
         cpuPackage = maxCpu;
         return;
     }
@@ -117,6 +150,7 @@ var listenNative = function (msg) {
     var memData = parseFloat(msg.mem_usage);
     sessionIndex++;
     sessionData.push([sessionIndex, cpuData, gpuData, memData]);
+    // console.log("data point", sessionIndex, cpuData, gpuData, memData);
 
     currPower = calculate_power(cpuData / 100)
     var currTime = new Date();
@@ -146,7 +180,6 @@ var formatOptions = function (){
     if (logOpen){
         option += " -logForUser"
     }
-    console.log("option = " + option);
     return option;
 }
 
@@ -166,7 +199,9 @@ var connectNative = function () {
 
 var updateData = function () {
     if (nativeConnected) {
-        nativePort.postMessage({ "message": "GET MonitorRecord" });
+        if (!runWithOhm || (runWithOhm && ohmRunning)) {
+            nativePort.postMessage({ "message": "GET MonitorRecord" });
+        }
     }
 }
 
@@ -323,4 +358,3 @@ var carbonCounter = function(){
 }
 
 carbonTimer = setInterval(carbonCounter, CARBON_INTERVAL * 1000);
-
