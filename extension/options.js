@@ -106,7 +106,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 
 function saveOptions() {
 
-  // Save enabled suggestions
+  // Check which suggestions are enabled
   const checkMemLeakChecked = document.getElementById('checkMemLeak').checked;
   const clearBrowsingDataChecked = document.getElementById('clearBrowsingData').checked;
   const disableHardwareAccelerationChecked = document.getElementById('disableHardwareAcceleration').checked;
@@ -114,57 +114,25 @@ function saveOptions() {
   const useAdBlockerChecked = document.getElementById('useAdBlocker').checked;
   const useTabDiscarderChecked = document.getElementById('useTabDiscarder').checked;
   const useTabSuspenderChecked = document.getElementById('useTabSuspender').checked;
-  chrome.storage.sync.set({ suggestion_checkMemLeak: checkMemLeakChecked }, function () {
-    if (checkMemLeakChecked) {
-      console.log("checkMemLeakChecked = " + checkMemLeakChecked);
-    }
-  });
-  chrome.storage.sync.set({ suggestion_clearBrowsingData: clearBrowsingDataChecked }, function () {
-    if (clearBrowsingDataChecked) {
-      console.log("clearBrowsingDataChecked = " + clearBrowsingDataChecked);
-    }
-  });
-  chrome.storage.sync.set({ suggestion_disableHardwareAcceleration: disableHardwareAccelerationChecked }, function () {
-    if (disableHardwareAccelerationChecked) {
-      console.log("disableHardwareAccelerationChecked = " + disableHardwareAccelerationChecked);
-    }
-  });
-  chrome.storage.sync.set({ suggestion_manageExtensions: manageExtensionsChecked }, function () {
-    if (manageExtensionsChecked) {
-      console.log("manageExtensionsChecked = " + manageExtensionsChecked);
-    }
-  });
-  chrome.storage.sync.set({ suggestion_useAdBlocker: useAdBlockerChecked }, function () {
-    if (useAdBlockerChecked) {
-      console.log("useAdBlockerChecked = " + useAdBlockerChecked);
-    }
-  });
-  chrome.storage.sync.set({ suggestion_useTabDiscarder: useTabDiscarderChecked }, function () {
-    if (useTabDiscarderChecked) {
-      console.log("useTabDiscarderChecked = " + useTabDiscarderChecked);
-    }
-  });
-  chrome.storage.sync.set({ suggestion_useTabSuspender: useTabSuspenderChecked }, function () {
-    if (useTabSuspenderChecked) {
-      console.log("useTabSuspenderChecked = " + useTabSuspenderChecked);
-    }
-  });
+
+  // Save enabled suggestions
+  chrome.storage.sync.set({ suggestion_checkMemLeak: checkMemLeakChecked }, function () {});
+  chrome.storage.sync.set({ suggestion_clearBrowsingData: clearBrowsingDataChecked }, function () {});
+  chrome.storage.sync.set({ suggestion_disableHardwareAcceleration: disableHardwareAccelerationChecked }, function () {});
+  chrome.storage.sync.set({ suggestion_manageExtensions: manageExtensionsChecked }, function () {});
+  chrome.storage.sync.set({ suggestion_useAdBlocker: useAdBlockerChecked }, function () {});
+  chrome.storage.sync.set({ suggestion_useTabDiscarder: useTabDiscarderChecked }, function () {});
+  chrome.storage.sync.set({ suggestion_useTabSuspender: useTabSuspenderChecked }, function () {});
   
   // Save run options
   const serverChecked = document.getElementById('serverCheckbox').checked;
   const loggingChecked = document.getElementById('loggingCheckbox').checked;
-  chrome.storage.sync.set({ serverEnabled: serverChecked }, function () {
-    if (serverChecked) {
-      console.log("serverChecked = " + serverChecked);
-    }
-  });
-  chrome.storage.sync.set({ loggingEnabled: loggingChecked }, function () {
-    if (loggingChecked) {
-      console.log("loggingChecked = " + loggingChecked);
-    }
-  });
+  chrome.storage.sync.set({ serverEnabled: serverChecked }, function () {});
+  chrome.storage.sync.set({ loggingEnabled: loggingChecked }, function () {});
 
   window.location.reload(true);
   alert('Options saved!');
+  
 }
+
 // ------------------------------------------------------------------------- //
